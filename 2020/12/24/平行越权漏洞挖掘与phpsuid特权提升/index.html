@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="author" content="magisec网络安全博客" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  
+  <title>平行越权漏洞挖掘与phpsuid特权提升   | magisec网络安全博客</title>
+
+  
+    <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+    <link rel="icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Dmagic</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">平行越权漏洞挖掘与phpsuid特权提升</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2020-12-24
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h2 id="80端口漏洞测试"><a href="#80端口漏洞测试" class="headerlink" title="80端口漏洞测试"></a>80端口漏洞测试</h2><h3 id="绕过XFF头ip验证"><a href="#绕过XFF头ip验证" class="headerlink" title="绕过XFF头ip验证"></a>绕过XFF头ip验证</h3><p>访问目标，发现验证来源ip。</p>
+<p><img src="https://img.rruu.net/image/5fe3f04ae71f0" alt="image-20201219110309992"></p>
+<p>修改xff头即可绕过，这里使用firefox的插件，<a target="_blank" rel="noopener" href="https://github.com/MisterPhilip/x-forwarded-for%EF%BC%8C%E8%BF%99%E6%98%AFip%E4%B8%BA127.0.0.1">https://github.com/MisterPhilip/x-forwarded-for，这是ip为127.0.0.1</a></p>
+<p><img src="https://img.rruu.net/image/5fe3f06d1f2af" alt="image-20201219110452887.png"></p>
+<p>发现用户注册功能，这里注册一个magisec用户，密码同用户。</p>
+<p><img src="https://img.rruu.net/image/5fe3f0fc48346" alt="image-20201219110532822.png"></p>
+<p>登录成功</p>
+<p><img src="https://img.rruu.net/image/5fe3f1114d139" alt="image-20201219110547540.png"></p>
+<h3 id="SQLMap检测SQL注入"><a href="#SQLMap检测SQL注入" class="headerlink" title="SQLMap检测SQL注入"></a>SQLMap检测SQL注入</h3><p>发现仅profile文件存在利用价值，尝试对user_id参数进行注入测试。</p>
+<p><img src="https://img.rruu.net/image/5fe3f2032d776" alt="image-20201219112144211"></p>
+<p>sqlmap开始测试</p>
+<p><img src="https://img.rruu.net/image/5fe3f2f3e5371" alt="image-20201219112209956"></p>
+<p>直接跑死，手工测试不存在sql注入。</p>
+<p><img src="https://img.rruu.net/image/5fe3f7f435011" alt="image-20201219112308053"></p>
+<h3 id="平行越权挖掘与利用"><a href="#平行越权挖掘与利用" class="headerlink" title="平行越权挖掘与利用"></a>平行越权挖掘与利用</h3><p>修改user_id为1发现，存在水平越权，泄露用户名密码。</p>
+<p><img src="https://img.rruu.net/image/5fe3fc07995d7" alt="image-20201219112417044"></p>
+<p>两种利用方法，第一 使用burpsuite直接便利抓取用户信息 第二，自己编写爬虫脚本爬取信息。</p>
+<h4 id="burpsuite抓取用户名信息"><a href="#burpsuite抓取用户名信息" class="headerlink" title="burpsuite抓取用户名信息"></a>burpsuite抓取用户名信息</h4><p>这里先演示burp suite</p>
+<p>添加上用户名密码</p>
+<p><img src="https://img.rruu.net/image/5fe3fc0ecff15" alt="image-20201219135115195"></p>
+<p>payload设置纯数字</p>
+<p><img src="https://img.rruu.net/image/5fe3fc1645899" alt="image-20201219135154421"></p>
+<p><img src="https://img.rruu.net/image/5fe3fc72ab087" alt="image-20201219135140532"></p>
+<p>点击start，查看结果。</p>
+<p><img src="https://img.rruu.net/image/5fe3fc7c63d25" alt="image-20201219135225973"></p>
+<p>将结果保存为user.txt与pass.txt即可</p>
+<h4 id="Python-Bs4编写抓取脚本"><a href="#Python-Bs4编写抓取脚本" class="headerlink" title="Python Bs4编写抓取脚本"></a>Python Bs4编写抓取脚本</h4><p>第二，使用python编写脚本</p>
+<p>代码如下：</p>
+<p><img src="https://img.rruu.net/image/5fe3fc825e153" alt="image-20201219135710259"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 getinfo.py</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe3fc8a4f3fa" alt="image-20201219135647621"></p>
+<p>收集用户名密码加工处理，爆破ssh，得到密码。</p>
+<p><img src="https://img.rruu.net/image/5fe3fc902f751" alt="image-20201219140044096"></p>
+<h2 id="特权提升"><a href="#特权提升" class="headerlink" title="特权提升"></a>特权提升</h2><h3 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h3><p>收集基本信息</p>
+<p><img src="https://img.rruu.net/image/5fe3fc96bd237" alt="image-20201219140507847"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+<p>发现php具有sudo权限，我们直接使用php来进行提权</p>
+<h3 id="具有suid权限的php特权提升"><a href="#具有suid权限的php特权提升" class="headerlink" title="具有suid权限的php特权提升"></a>具有suid权限的php特权提升</h3><p><img src="https://img.rruu.net/image/5fe3fc9f222a0" alt="image-20201219140613095"></p>
+<p>获取flag</p>
+<p><img src="https://img.rruu.net/image/5fe3fca60826e" alt="image-20201219140653525"></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2020/12/23/Linux_lxc%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2020-12-24
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2020/12/24/linux_suid_cp%E6%8F%90%E6%9D%83/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E6%BC%8F%E6%B4%9E%E6%B5%8B%E8%AF%95"><span class="toc-text">80端口漏洞测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87XFF%E5%A4%B4ip%E9%AA%8C%E8%AF%81"><span class="toc-text">绕过XFF头ip验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQLMap%E6%A3%80%E6%B5%8BSQL%E6%B3%A8%E5%85%A5"><span class="toc-text">SQLMap检测SQL注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B3%E8%A1%8C%E8%B6%8A%E6%9D%83%E6%8C%96%E6%8E%98%E4%B8%8E%E5%88%A9%E7%94%A8"><span class="toc-text">平行越权挖掘与利用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#burpsuite%E6%8A%93%E5%8F%96%E7%94%A8%E6%88%B7%E5%90%8D%E4%BF%A1%E6%81%AF"><span class="toc-text">burpsuite抓取用户名信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python-Bs4%E7%BC%96%E5%86%99%E6%8A%93%E5%8F%96%E8%84%9A%E6%9C%AC"><span class="toc-text">Python Bs4编写抓取脚本</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">特权提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B7%E6%9C%89suid%E6%9D%83%E9%99%90%E7%9A%84php%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">具有suid权限的php特权提升</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/magisec/">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="2933653699@qq.com">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="Dmagic_hk">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      <a href="">Copyright © magisec 2021</a>
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>

