@@ -6,10 +6,8 @@
   <meta name="author" content="magisec网络安全博客" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
-    <meta name="robots" content="noindex" />
   
-  
-  <title>magisec网络安全博客</title>
+  <title>脱壳常用方法   | magisec网络安全博客</title>
 
   
     <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
@@ -75,151 +73,104 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="Five86-1">
-        <div class="time-m-d">2020-12-28</div>
-        <div class="title">
-          <a href="/2020/12/28/Five86-1/">
-            
-              
-                <span>Five86-1</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">脱壳常用方法</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-01-29
+        </span>
+        
       </div>
-    
-      <div class="post-item" title="Chill_Hack">
-        <div class="time-m-d">2020-12-28</div>
-        <div class="title">
-          <a href="/2020/12/28/Chill-Hack/">
-            
-              
-                <span>Chill_Hack</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <p>不必纠结于脱壳，除非你做逆向，破解一般不用特别管壳，SDK例外。</p>
+<h2 id="单步跟踪法"><a href="#单步跟踪法" class="headerlink" title="单步跟踪法"></a>单步跟踪法</h2><p>过于繁琐，不做演示。</p>
+<ul>
+<li>F7 F8 jmp往上跳 则F4跳过jmp，一般使用F8，如果F8直接加载程序了，重来，下断点，F7进call。</li>
+</ul>
+<h2 id="esp定律法"><a href="#esp定律法" class="headerlink" title="esp定律法"></a>esp定律法</h2><ul>
+<li><p>单步一次</p>
+</li>
+<li><p>给esp下硬件断点</p>
+</li>
+</ul>
+<h2 id="内存镜像法"><a href="#内存镜像法" class="headerlink" title="内存镜像法"></a>内存镜像法</h2><ul>
+<li>给资源块下段，然后给代码段下断点。</li>
+</ul>
+<h2 id="出口标志法"><a href="#出口标志法" class="headerlink" title="出口标志法"></a>出口标志法</h2><ul>
+<li>有的语言开头有pushad他对应的就有popad</li>
+</ul>
+<h2 id="ImpREC与LordPE脱壳"><a href="#ImpREC与LordPE脱壳" class="headerlink" title="ImpREC与LordPE脱壳"></a>ImpREC与LordPE脱壳</h2><p>使用od脱壳失败，或者lordpe脱壳失败。需要修复指针，我们使用imprec修复。</p>
+
       </div>
-    
-      <div class="post-item" title="Os-hackNos3">
-        <div class="time-m-d">2020-12-27</div>
-        <div class="title">
-          <a href="/2020/12/27/Os-hackNos3/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>Os-hackNos3</span>
-              
+              <a href="/2021/01/28/5.%E5%B8%B8%E8%A7%81%E7%A0%B4%E8%A7%A3%E6%96%B9%E6%B3%95/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-01-29
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/01/30/7.Windows%20api%E5%BF%AB%E9%80%9F%E7%A0%B4%E8%A7%A3/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="odin">
-        <div class="time-m-d">2020-12-27</div>
-        <div class="title">
-          <a href="/2020/12/27/odin/">
-            
-              
-                <span>odin</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E6%AD%A5%E8%B7%9F%E8%B8%AA%E6%B3%95"><span class="toc-text">单步跟踪法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#esp%E5%AE%9A%E5%BE%8B%E6%B3%95"><span class="toc-text">esp定律法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%95%9C%E5%83%8F%E6%B3%95"><span class="toc-text">内存镜像法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BA%E5%8F%A3%E6%A0%87%E5%BF%97%E6%B3%95"><span class="toc-text">出口标志法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ImpREC%E4%B8%8ELordPE%E8%84%B1%E5%A3%B3"><span class="toc-text">ImpREC与LordPE脱壳</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="Lampiao">
-        <div class="time-m-d">2020-12-26</div>
-        <div class="title">
-          <a href="/2020/12/26/Lampiao/">
-            
-              
-                <span>Lampiao</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Hackme1">
-        <div class="time-m-d">2020-12-26</div>
-        <div class="title">
-          <a href="/2020/12/26/Hackme1/">
-            
-              
-                <span>Hackme1</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Callme">
-        <div class="time-m-d">2020-12-25</div>
-        <div class="title">
-          <a href="/2020/12/25/Callme/">
-            
-              
-                <span>Callme</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux特权提升技术合集">
-        <div class="time-m-d">2020-12-25</div>
-        <div class="title">
-          <a href="/2020/12/25/Linux%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87%E6%8A%80%E6%9C%AF%E5%90%88%E9%9B%86/">
-            
-              
-                <span>Linux特权提升技术合集</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="school">
-        <div class="time-m-d">2020-12-25</div>
-        <div class="title">
-          <a href="/2020/12/25/school/">
-            
-              
-                <span>school</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux suid cp特权提升">
-        <div class="time-m-d">2020-12-24</div>
-        <div class="title">
-          <a href="/2020/12/24/linux_suid_cp%E6%8F%90%E6%9D%83/">
-            
-              
-                <span>Linux suid cp特权提升</span>
-              
-            
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
       </div>
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/2/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">3 / 4</span>
-    
-      <a href="/page/4/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">

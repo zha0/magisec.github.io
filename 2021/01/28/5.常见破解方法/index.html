@@ -6,10 +6,8 @@
   <meta name="author" content="magisec网络安全博客" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
-    <meta name="robots" content="noindex" />
   
-  
-  <title>magisec网络安全博客</title>
+  <title>常见的破解方法以及寻找关键代码   | magisec网络安全博客</title>
 
   
     <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
@@ -75,151 +73,129 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="Five86-1">
-        <div class="time-m-d">2020-12-28</div>
-        <div class="title">
-          <a href="/2020/12/28/Five86-1/">
-            
-              
-                <span>Five86-1</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">常见的破解方法以及寻找关键代码</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-01-28
+        </span>
+        
       </div>
-    
-      <div class="post-item" title="Chill_Hack">
-        <div class="time-m-d">2020-12-28</div>
-        <div class="title">
-          <a href="/2020/12/28/Chill-Hack/">
-            
-              
-                <span>Chill_Hack</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h2 id="何为关键跳与Call"><a href="#何为关键跳与Call" class="headerlink" title="何为关键跳与Call"></a>何为关键跳与Call</h2><p>什么是关键跳？</p>
+<p>一般来说关键跳就是程序验证阶段调用的验证跳转，通过call的返回进行跳转。我们可以通过修改跳转地址，将假的结果修改为真。或者修改跳转地址，跳转到其他窗口。</p>
+<p>什么是关键call？</p>
+<p>一般来说关键call就是程序验证阶段调用的验证函数，寻找关键call是分析程序重要的一点。</p>
+<p>如何破解？</p>
+<p>我们寻找关键call，有的call是文本比较必然有注册码比较，我们可以直接看到注册码。其次，我们也可以修改注册码比较函数的返回结果。或者修改跳转方向，将程序跳转至注册码正确的代码。</p>
+<p>易语言代码示例如下（精易模块）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">.版本 2</span><br><span class="line">.支持库 spec</span><br><span class="line"></span><br><span class="line">.程序集 窗口程序集_启动窗口</span><br><span class="line"></span><br><span class="line">.子程序 __启动窗口_创建完毕</span><br><span class="line"></span><br><span class="line">编辑框1.内容 ＝ 系统_取CPU序列号 ()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.子程序 _按钮1_被单击</span><br><span class="line">.局部变量 注册码, 文本型</span><br><span class="line">.局部变量 机器码, 文本型</span><br><span class="line"></span><br><span class="line">机器码 ＝ 系统_取CPU序列号 ()</span><br><span class="line">注册码 ＝ 文本_颠倒 (机器码)</span><br><span class="line">调试输出 (注册码)</span><br><span class="line">.如果 (注册码 ＝ 编辑框2.内容)</span><br><span class="line">    载入 (窗口1, , 真)</span><br><span class="line">.否则</span><br><span class="line">    信息框 (“注册码错误”, 0, , )</span><br><span class="line">.如果结束</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="寻找关键跳与call"><a href="#寻找关键跳与call" class="headerlink" title="寻找关键跳与call"></a>寻找关键跳与call</h2><h3 id="查找关键字符串"><a href="#查找关键字符串" class="headerlink" title="查找关键字符串"></a>查找关键字符串</h3><p>od打开程序</p>
+<p><img src="https://img.rruu.net/image/605154e994726" alt="image-20210126172733575"></p>
+<p>快捷键alt+e来到模块列表，双击程序。来到入口点，右键中文搜索，选择智能搜索。</p>
+<p><img src="https://img.rruu.net/image/605154ef8f529" alt="image-20210126172941358"></p>
+<p>拉到最上面，看见中文，直接双击。</p>
+<p><img src="https://img.rruu.net/image/605154f5916a6" alt="image-20210126173145584"></p>
+<p>发现程序的关键代码</p>
+<p><img src="https://img.rruu.net/image/605154fb81c91" alt="image-20210126173658870"></p>
+<h3 id="信息框堆栈回溯"><a href="#信息框堆栈回溯" class="headerlink" title="信息框堆栈回溯"></a>信息框堆栈回溯</h3><p>拖进od，F9运行。随便输入，点击进入软件。</p>
+<p><img src="https://img.rruu.net/image/60515500a53b0" alt="image-20210126173747110"></p>
+<p>点击暂停，alt+k</p>
+<p><img src="https://img.rruu.net/image/60515506755f3" alt="image-20210126174333500"></p>
+<p>这里需要注意的是不要盲目选择中文。先看调用过程也就是第三列，找MessageBox然后看到最下面，接着找调用来自，必须要来自程序本身。一般选择最后一个。</p>
+<p><img src="https://img.rruu.net/image/6051550d085ea" alt="image-20210126174953438"></p>
+<p>右键显示调用，往上看肯定是程序的关键跳转或者代码。但是我们不要直接往上找，我们通过程序的跳转把我们带到关键位置去，在下面的jnz下一个断电，然后一直f8跟进。</p>
+<p><img src="https://img.rruu.net/image/605155123da6e" alt="image-20210126175015829"></p>
+<p>发现断在了我们的断点，我们一直f8。</p>
+<p><img src="https://img.rruu.net/image/6051551771d98" alt="image-20210126180223002"></p>
+<p>一直f8，直到看到了注册码错误。这个时候关键call和关键跳一定在上面了。</p>
+<p><img src="https://img.rruu.net/image/6051551d09f76" alt="image-20210126180316417"></p>
+<p>往上看，易语言关键call，关键跳，以及载入窗口的特征。</p>
+<p><img src="https://img.rruu.net/image/60515522aba67" alt="image-20210126182226716"></p>
+<p>修改je跳转为不跳转即可</p>
+<p><img src="https://img.rruu.net/image/605155283eeb0" alt="image-20210126182332527"></p>
+<h3 id="程序按钮事件"><a href="#程序按钮事件" class="headerlink" title="程序按钮事件"></a>程序按钮事件</h3><p>易语言按钮事件特征 FF55FC5F5E</p>
+<p>ctrl+b输入FF55FC5F5E，查找易语言按钮特征。在call这里，下断点。然后f7进入。</p>
+<p><img src="https://img.rruu.net/image/6051552d91521" alt="image-20210126182535417"></p>
+<p>易语言关键跳关键call，载入窗口特征。</p>
+<p><img src="https://img.rruu.net/image/605155330aa47" alt="image-20210126182725094"></p>
+<ul>
+<li>高版本MFC MFC140U.DLL 5783F8?? 0F87???????? FF2485</li>
+<li>VB de 用od脚本</li>
+</ul>
+
       </div>
-    
-      <div class="post-item" title="Os-hackNos3">
-        <div class="time-m-d">2020-12-27</div>
-        <div class="title">
-          <a href="/2020/12/27/Os-hackNos3/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>Os-hackNos3</span>
-              
+              <a href="/2021/01/27/4.%E6%B1%87%E7%BC%96%E5%9F%BA%E7%A1%80/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-01-28
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/01/29/6.%E8%84%B1%E5%A3%B3%E6%96%B9%E6%B3%95/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="odin">
-        <div class="time-m-d">2020-12-27</div>
-        <div class="title">
-          <a href="/2020/12/27/odin/">
-            
-              
-                <span>odin</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%95%E4%B8%BA%E5%85%B3%E9%94%AE%E8%B7%B3%E4%B8%8ECall"><span class="toc-text">何为关键跳与Call</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BB%E6%89%BE%E5%85%B3%E9%94%AE%E8%B7%B3%E4%B8%8Ecall"><span class="toc-text">寻找关键跳与call</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E6%89%BE%E5%85%B3%E9%94%AE%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">查找关键字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%A1%86%E5%A0%86%E6%A0%88%E5%9B%9E%E6%BA%AF"><span class="toc-text">信息框堆栈回溯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E6%8C%89%E9%92%AE%E4%BA%8B%E4%BB%B6"><span class="toc-text">程序按钮事件</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="Lampiao">
-        <div class="time-m-d">2020-12-26</div>
-        <div class="title">
-          <a href="/2020/12/26/Lampiao/">
-            
-              
-                <span>Lampiao</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Hackme1">
-        <div class="time-m-d">2020-12-26</div>
-        <div class="title">
-          <a href="/2020/12/26/Hackme1/">
-            
-              
-                <span>Hackme1</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Callme">
-        <div class="time-m-d">2020-12-25</div>
-        <div class="title">
-          <a href="/2020/12/25/Callme/">
-            
-              
-                <span>Callme</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux特权提升技术合集">
-        <div class="time-m-d">2020-12-25</div>
-        <div class="title">
-          <a href="/2020/12/25/Linux%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87%E6%8A%80%E6%9C%AF%E5%90%88%E9%9B%86/">
-            
-              
-                <span>Linux特权提升技术合集</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="school">
-        <div class="time-m-d">2020-12-25</div>
-        <div class="title">
-          <a href="/2020/12/25/school/">
-            
-              
-                <span>school</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux suid cp特权提升">
-        <div class="time-m-d">2020-12-24</div>
-        <div class="title">
-          <a href="/2020/12/24/linux_suid_cp%E6%8F%90%E6%9D%83/">
-            
-              
-                <span>Linux suid cp特权提升</span>
-              
-            
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
       </div>
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/2/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">3 / 4</span>
-    
-      <a href="/page/4/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">

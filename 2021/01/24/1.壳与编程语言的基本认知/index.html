@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="author" content="magisec网络安全博客" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  
+  <title>壳与编程语言的基本认知   | magisec网络安全博客</title>
+
+  
+    <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+    <link rel="icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Dmagic</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about.html">
+          <a href="/about.html">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">壳与编程语言的基本认知</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-01-24
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h2 id="加密壳与压缩壳介绍与区别"><a href="#加密壳与压缩壳介绍与区别" class="headerlink" title="加密壳与压缩壳介绍与区别"></a>加密壳与压缩壳介绍与区别</h2><p>#常见的软件壳</p>
+<ul>
+<li>加密壳 zprotect vprotect enigma VMPprotect Shielden SDK</li>
+<li>压缩壳 upx aspcak 掘北</li>
+</ul>
+<p>#一般情况都能破解的壳：</p>
+<ul>
+<li>所有压缩壳</li>
+<li>zp可以脱壳</li>
+<li>vprotect enigma修改机器码</li>
+<li>VMP Shielden破解不了</li>
+</ul>
+<p>#常用的查壳工具</p>
+<ul>
+<li><p>exeinfope 更新网址：<a target="_blank" rel="noopener" href="http://www.exeinfo.xn.pl/">http://www.exeinfo.xn.pl/</a></p>
+</li>
+<li><p>peid 停止更新</p>
+</li>
+<li><p>die</p>
+</li>
+</ul>
+<h2 id="常见编程语言的入口特征"><a href="#常见编程语言的入口特征" class="headerlink" title="常见编程语言的入口特征"></a>常见编程语言的入口特征</h2><p>#常见的软件壳</p>
+<ul>
+<li><p>常见的编程语言：delphi vc++6.0 易语言 C# vb dasm bc++</p>
+</li>
+<li><p>OEP就是程序入口点</p>
+<h3 id="易语言入口点特征"><a href="#易语言入口点特征" class="headerlink" title="易语言入口点特征"></a>易语言入口点特征</h3><ul>
+<li>OEP写死 00401000</li>
+<li>入口点载入knr文件 动态编译</li>
+</ul>
+</li>
+</ul>
+<p>入口特征如下（仅静态编译）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">00403831 &gt;&#x2F;$  55            PUSH EBP</span><br><span class="line">00403832  |.  8BEC          MOV EBP,ESP</span><br><span class="line">00403834  |.  6A FF         PUSH -1</span><br><span class="line">00403836  |.  68 F0624000   PUSH Nisy521.004062F0</span><br><span class="line">0040383B  |.  68 A44C4000   PUSH Nisy521.00404CA4                    ;  SE 处理程序安装</span><br><span class="line">00403840  |.  64:A1 0000000&gt;MOV EAX,DWORD PTR FS:[0]</span><br><span class="line">00403846  |.  50            PUSH EAX</span><br><span class="line">00403847  |.  64:8925 00000&gt;MOV DWORD PTR FS:[0],ESP</span><br></pre></td></tr></table></figure>
+<h3 id="bc-入口点特征"><a href="#bc-入口点特征" class="headerlink" title="bc++入口点特征"></a>bc++入口点特征</h3><p>开头很明显的 fb:c++hook</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">0040163C &gt; $ &#x2F;EB 10         JMP SHORT BCLOCK.0040164E</span><br><span class="line">0040163E     |66            DB 66                                    ;  CHAR &#39;f&#39;</span><br><span class="line">0040163F     |62            DB 62                                    ;  CHAR &#39;b&#39;</span><br><span class="line">00401640     |3A            DB 3A                                    ;  CHAR &#39;:&#39;</span><br><span class="line">00401641     |43            DB 43                                    ;  CHAR &#39;C&#39;</span><br><span class="line">00401642     |2B            DB 2B                                    ;  CHAR &#39;+&#39;</span><br><span class="line">00401643     |2B            DB 2B                                    ;  CHAR &#39;+&#39;</span><br><span class="line">00401644     |48            DB 48                                    ;  CHAR &#39;H&#39;</span><br><span class="line">00401645     |4F            DB 4F                                    ;  CHAR &#39;O&#39;</span><br><span class="line">00401646     |4F            DB 4F                                    ;  CHAR &#39;O&#39;</span><br><span class="line">00401647     |4B            DB 4B                                    ;  CHAR &#39;K&#39;</span><br><span class="line">00401648     |90            NOP</span><br><span class="line">00401649     |E9            DB E9</span><br><span class="line">0040164A   . |98E04E00      DD OFFSET BCLOCK.___CPPdebugHook</span><br><span class="line">0040164E   &gt; \A1 8BE04E00   MOV EAX,DWORD PTR DS:[4EE08B]</span><br><span class="line">00401653   .  C1E0 02       SHL EAX,2</span><br><span class="line">00401656   .  A3 8FE04E00   MOV DWORD PTR DS:[4EE08F],EAX</span><br><span class="line">0040165B   .  52            PUSH EDX</span><br><span class="line">0040165C   .  6A 00         PUSH 0                                   ; &#x2F;pModule &#x3D; NULL</span><br><span class="line">0040165E   .  E8 DFBC0E00   CALL &lt;JMP.&amp;KERNEL32.GetModuleHandleA&gt;    ; \GetModuleHandleA</span><br><span class="line">00401663   .  8BD0          MOV EDX,EAX</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="delphi入口点特征"><a href="#delphi入口点特征" class="headerlink" title="delphi入口点特征"></a>delphi入口点特征</h3><p>有很明显的规律，让人感觉很整齐。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">00509CB0 &gt; $  55            PUSH EBP</span><br><span class="line">00509CB1   .  8BEC          MOV EBP,ESP</span><br><span class="line">00509CB3   .  83C4 EC       ADD ESP,-14</span><br><span class="line">00509CB6   .  53            PUSH EBX</span><br><span class="line">00509CB7   .  56            PUSH ESI</span><br><span class="line">00509CB8   .  57            PUSH EDI</span><br><span class="line">00509CB9   .  33C0          XOR EAX,EAX</span><br><span class="line">00509CBB   .  8945 EC       MOV DWORD PTR SS:[EBP-14],EAX</span><br><span class="line">00509CBE   .  B8 20975000   MOV EAX,unpack.00509720</span><br><span class="line">00509CC3   .  E8 84CCEFFF   CALL unpack.0040694C</span><br></pre></td></tr></table></figure>
+<h3 id="vb-5-6入口点特征"><a href="#vb-5-6入口点特征" class="headerlink" title="vb 5/6入口点特征"></a>vb 5/6入口点特征</h3><p>一个push一个call，往上一堆jmp。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">00401166  - FF25 6C104000   JMP DWORD PTR DS:[&lt;&amp;MSVBVM60.#100&gt;]      ; MSVBVM60.ThunRTMain</span><br><span class="line">0040116C &gt;  68 147C4000     PUSH PACKME.00407C14</span><br><span class="line">00401171    E8 F0FFFFFF     CALL &lt;JMP.&amp;MSVBVM60.#100&gt;</span><br><span class="line">00401176    0000            ADD BYTE PTR DS:[EAX],AL</span><br><span class="line">00401178    0000            ADD BYTE PTR DS:[EAX],AL</span><br><span class="line">0040117A    0000            ADD BYTE PTR DS:[EAX],AL</span><br><span class="line">0040117C    3000            XOR BYTE PTR DS:[EAX],AL</span><br><span class="line"></span><br><span class="line">或省略第一行的JMP</span><br><span class="line"></span><br><span class="line">00401FBC &gt;  68 D0D44000        push dumped_.0040D4D0</span><br><span class="line">00401FC1    E8 EEFFFFFF        call &lt;jmp.&amp;msvbvm60.ThunRTMain&gt;</span><br><span class="line">00401FC6    0000               add byte ptr ds:[eax],al</span><br><span class="line">00401FC8    0000               add byte ptr ds:[eax],al</span><br><span class="line">00401FCA    0000               add byte ptr ds:[eax],al</span><br><span class="line">00401FCC    3000               xor byte ptr ds:[eax],al</span><br><span class="line">00401FCE    0000               add byte ptr ds:[eax],al</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="vc-6-0入口点特征"><a href="#vc-6-0入口点特征" class="headerlink" title="vc++6.0入口点特征"></a>vc++6.0入口点特征</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">00496EB8 &gt;&#x2F;$  55            PUSH EBP                                 ;  (初始 cpu 选择)</span><br><span class="line">00496EB9  |.  8BEC          MOV EBP,ESP</span><br><span class="line">00496EBB  |.  6A FF         PUSH -1</span><br><span class="line">00496EBD  |.  68 40375600   PUSH Screensh.00563740</span><br><span class="line">00496EC2  |.  68 8CC74900   PUSH Screensh.0049C78C                   ;  SE 处理程序安装</span><br><span class="line">00496EC7  |.  64:A1 0000000&gt;MOV EAX,DWORD PTR FS:[0]</span><br><span class="line">00496ECD  |.  50            PUSH EAX</span><br><span class="line">00496ECE  |.  64:8925 00000&gt;MOV DWORD PTR FS:[0],ESP</span><br><span class="line">00496ED5  |.  83EC 58       SUB ESP,58</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="dasm入口点特征"><a href="#dasm入口点特征" class="headerlink" title="dasm入口点特征"></a>dasm入口点特征</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">00401000 &gt;&#x2F;$  6A 00         PUSH 0                                   ; &#x2F;pModule &#x3D; NULL</span><br><span class="line">00401002  |.  E8 C50A0000   CALL &lt;JMP.&amp;KERNEL32.GetModuleHandleA&gt;    ; \GetModuleHandleA</span><br><span class="line">00401007  |.  A3 0C354000   MOV DWORD PTR DS:[40350C],EAX</span><br><span class="line">0040100C  |.  E8 B50A0000   CALL &lt;JMP.&amp;KERNEL32.GetCommandLineA&gt;     ; [GetCommandLineA</span><br><span class="line">00401011  |.  A3 10354000   MOV DWORD PTR DS:[403510],EAX</span><br><span class="line">00401016  |.  6A 0A         PUSH 0A                                  ; &#x2F;Arg4 &#x3D; 0000000A</span><br><span class="line">00401018  |.  FF35 10354000 PUSH DWORD PTR DS:[403510]               ; |Arg3 &#x3D; 00000000</span><br><span class="line">0040101E  |.  6A 00         PUSH 0                                   ; |Arg2 &#x3D; 00000000</span><br><span class="line">00401020  |.  FF35 0C354000 PUSH DWORD PTR DS:[40350C]               ; |Arg1 &#x3D; 00000000</span><br></pre></td></tr></table></figure>
+<h2 id="常见壳的入口点特征"><a href="#常见壳的入口点特征" class="headerlink" title="常见壳的入口点特征"></a>常见壳的入口点特征</h2><h3 id="压缩壳"><a href="#压缩壳" class="headerlink" title="压缩壳"></a>压缩壳</h3><ul>
+<li><p>upx pusha开头</p>
+</li>
+<li><p>aspcak pusha开头</p>
+</li>
+<li><p>掘北 push 开头</p>
+</li>
+</ul>
+<h3 id="SDK"><a href="#SDK" class="headerlink" title="SDK"></a>SDK</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">置入代码 (&#123; 235, 8, 83, 84, 95, 83, 84, 69, 78, 68 &#125;) &#39; Code_Confusion标记结尾</span><br><span class="line">&#x2F;&#x2F;Code_Elimination 是代码清除标记，允许您选择一部分代码在运行后从内存中删除；使用此标记的目的是为了防止破解者从内存中转储出完整的程序代码。</span><br><span class="line">置入代码 (&#123; 235, 8, 79, 67, 95, 83, 84, 65, 82, 84 &#125;) &#39; Code_Elimination标记开始</span><br><span class="line">置入代码 (&#123; 235, 8, 79, 67, 95, 79, 67, 69, 78, 68 &#125;) &#39; Code_Elimination标记结尾</span><br><span class="line">&#x2F;&#x2F;Decode_onExec 是动态解码标记，允许您选择一部分只在执行时才解密的代码段；这部分代码仅在需要执行时才解码，执行前和执行后均处于加密状态</span><br><span class="line">置入代码 (&#123; 235, 8, 68, 89, 95, 83, 84, 65, 82, 84 &#125;) &#x2F;&#x2F; Decode_onExec标记开始</span><br><span class="line">置入代码 (&#123; 235, 8, 68, 89, 95, 68, 89, 69, 78, 68 &#125;) &#x2F;&#x2F; Decode_onExec标记结尾</span><br><span class="line">&#x2F;&#x2F;Decode_onReg 是注册解码标记，允许您选择一部分使用有效密钥才解密的代码；如果注册密钥不正确，那么这部分代码将永远处于加密状态。通俗地讲，这部分代码仅在注册版中执行</span><br><span class="line">&#x2F;&#x2F;源代码中可以使用任意数量的 Decode_onReg 标记，但是这些代码段在执行时会同时解密。注册解码标记主要用于激活未注册版中被限制的功能，使之注册成为完整版。</span><br><span class="line">置入代码 (&#123; 235, 8, 82, 68, 95, 83, 84, 65, 82, 84 &#125;) &#x2F;&#x2F; Decode_onReg标记开始</span><br><span class="line">置入代码 (&#123; 235, 8, 82, 68, 95, 82, 68, 69, 78, 68 &#125;) &#x2F;&#x2F; Decode_onReg标记结尾</span><br><span class="line">&#x2F;&#x2F;Zprotect_VM 是虚拟机加密标记，允许您选择一部分代码放到虚拟机中运行；虚拟机的指令系统是完全不同于现有的 x86 指令，可以有效阻止代码还原及分析</span><br><span class="line">置入代码 (&#123; 235, 8, 86, 77, 95, 83, 84, 65, 82, 84 &#125;) &#x2F;&#x2F; Zprotect_VM标记开始</span><br><span class="line">置入代码 (&#123; 235, 8, 86, 77, 95, 86, 77, 69, 78, 68 &#125;) &#x2F;&#x2F; Zprotect_VM标记结尾</span><br><span class="line">-----------适用于ZProtect V1.4.9.0版本---------</span><br><span class="line">VMProtect.易的SDK</span><br><span class="line">置入代码 (&#123; 235, 16, 86, 77, 80, 114, 111, 116, 101, 99, 116, 32, 98, 101, 103, 105, 110, 0 &#125;) &#39; VMP保护开始标志</span><br><span class="line">&#39;关键代码</span><br><span class="line">置入代码 (&#123; 235, 14, 86, 77, 80, 114, 111, 116, 101, 99, 116, 32, 101, 110, 100, 0 &#125;) &#39; VMP保护结束标志</span><br><span class="line">Enigma加密易语言的SDK</span><br><span class="line">置入代码 (&#123; 235, 10, 69, 67, 82, 79, 78, 69, 88, 69, 67, 66 &#125;)&#39; 标记开始处</span><br><span class="line">&#39;关键代码</span><br><span class="line">置入代码 (&#123; 235, 10, 69, 67, 82, 79, 78, 69, 88, 69, 67, 69 &#125;)&#39; 标记结束处</span><br><span class="line"></span><br><span class="line">NoobyProtect加密易语言的SDK</span><br><span class="line">置入代码 (&#123; 235, 6, 78, 80, 66, 69, 71, 78 &#125;)&#39; 标记开始处</span><br><span class="line">&#39;关键代码</span><br><span class="line">置入代码 (&#123; 235, 6, 78, 80, 69, 78, 68, 80 &#125;)&#39; 标记结束处</span><br><span class="line"></span><br><span class="line">穿山甲调用功能型加密易语言SDK的DEMO</span><br><span class="line">置入代码 (&#123; 235, 3, 214, 215, 1 &#125;)&#39; 标记开始处</span><br><span class="line">&#39;关键代码</span><br><span class="line">置入代码 (&#123; 235, 3, 214, 215, 0 &#125;)&#39; 标记结束处</span><br><span class="line">ASP加密易语言SDK</span><br><span class="line">置入代码 (&#123; 235, 4, 235, 5, 25, 1, 233, 37, 0 &#125;)&#39; 标记开始处</span><br><span class="line">&#39;关键代码</span><br><span class="line">置入代码 (&#123; 235, 4, 235, 5, 41, 1, 233, 133, 0, &#125;)&#39; 标记结束处</span><br><span class="line"></span><br><span class="line">Shielden 2.0.1.0 </span><br><span class="line">置入代码 (&#123; 235, 7, 83, 69, 66, 69, 71, 78, 0 &#125;)  &#39; SE_PROTECT_START</span><br><span class="line">&#39; 关键代码</span><br><span class="line">置入代码 (&#123; 235, 7, 83, 69, 69, 78, 68, 80, 0 &#125;)  &#39; SE_PROTECT_END</span><br><span class="line"></span><br><span class="line">置入代码 (&#123; 235, 7, 83, 69, 66, 69, 71, 78, 77 &#125;)  &#39; SE_PROTECT_START_MUTATION</span><br><span class="line">关键代码</span><br><span class="line">置入代码 (&#123; 235, 7, 83, 69, 69, 78, 68, 80, 0 &#125;)  &#39; SE_PROTECT_END</span><br><span class="line">置入代码 (&#123; 235, 7, 83, 69, 66, 69, 71, 78, 85 &#125;)  &#39; SE_PROTECT_START_ULTRA</span><br><span class="line">关键代码</span><br><span class="line">置入代码 (&#123; 235, 7, 83, 69, 69, 78, 68, 80, 0 &#125;)  &#39; SE_PROTECT_END</span><br><span class="line">置入代码 (&#123; 235, 7, 83, 69, 66, 69, 71, 78, 86 &#125;)  &#39; </span><br><span class="line">&#39; 关键代码</span><br><span class="line">置入代码 (&#123; 235, 7, 83, 69, 69, 78, 68, 80, 0 &#125;)  &#39; SE_PROTECT_END</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>易语言插件推荐：EVA</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2021/01/23/Player/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-01-24
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/01/25/2.%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86%E5%A3%B3%E4%B8%8E%E5%8E%8B%E7%BC%A9%E5%A3%B3%E4%BB%8B%E7%BB%8D%E4%B8%8E%E5%8C%BA%E5%88%AB"><span class="toc-text">加密壳与压缩壳介绍与区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%9A%84%E5%85%A5%E5%8F%A3%E7%89%B9%E5%BE%81"><span class="toc-text">常见编程语言的入口特征</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%98%93%E8%AF%AD%E8%A8%80%E5%85%A5%E5%8F%A3%E7%82%B9%E7%89%B9%E5%BE%81"><span class="toc-text">易语言入口点特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bc-%E5%85%A5%E5%8F%A3%E7%82%B9%E7%89%B9%E5%BE%81"><span class="toc-text">bc++入口点特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#delphi%E5%85%A5%E5%8F%A3%E7%82%B9%E7%89%B9%E5%BE%81"><span class="toc-text">delphi入口点特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vb-5-6%E5%85%A5%E5%8F%A3%E7%82%B9%E7%89%B9%E5%BE%81"><span class="toc-text">vb 5&#x2F;6入口点特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vc-6-0%E5%85%A5%E5%8F%A3%E7%82%B9%E7%89%B9%E5%BE%81"><span class="toc-text">vc++6.0入口点特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dasm%E5%85%A5%E5%8F%A3%E7%82%B9%E7%89%B9%E5%BE%81"><span class="toc-text">dasm入口点特征</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%A3%B3%E7%9A%84%E5%85%A5%E5%8F%A3%E7%82%B9%E7%89%B9%E5%BE%81"><span class="toc-text">常见壳的入口点特征</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9%E5%A3%B3"><span class="toc-text">压缩壳</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SDK"><span class="toc-text">SDK</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/magisec/">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      <a href="">Copyright © magisec 2021</a>
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>

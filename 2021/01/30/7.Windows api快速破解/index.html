@@ -6,10 +6,8 @@
   <meta name="author" content="magisec网络安全博客" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
-    <meta name="robots" content="noindex" />
   
-  
-  <title>magisec网络安全博客</title>
+  <title>Windows API快速破解   | magisec网络安全博客</title>
 
   
     <link rel="apple-touch-icon" href="https://ae01.alicdn.com/kf/U8f9a193ee8f04b09b08b3d8ceedb159d2.jpg">
@@ -75,151 +73,104 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="Five86-1">
-        <div class="time-m-d">2020-12-28</div>
-        <div class="title">
-          <a href="/2020/12/28/Five86-1/">
-            
-              
-                <span>Five86-1</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Windows API快速破解</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-01-30
+        </span>
+        
       </div>
-    
-      <div class="post-item" title="Chill_Hack">
-        <div class="time-m-d">2020-12-28</div>
-        <div class="title">
-          <a href="/2020/12/28/Chill-Hack/">
-            
-              
-                <span>Chill_Hack</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <p>tips：</p>
+<p>mov edi，edi</p>
+<p>windows api调用特征</p>
+<h2 id="MessageBox"><a href="#MessageBox" class="headerlink" title="MessageBox"></a>MessageBox</h2><p>函数原型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int&#96; &#96;WINAPI MessageBox(&#96;&#96;HWND&#96; &#96;hWnd,&#96;&#96;LPCTSTR&#96; &#96;lpText,&#96;&#96;LPCTSTR&#96; &#96;lpCaption,&#96;&#96;UINT&#96; &#96;uType);</span><br></pre></td></tr></table></figure>
+<p>hWnd：此参数代表消息框拥有的窗口。如果为NULL，则消息框没有拥有窗口。</p>
+<p>lpText：消息框的内容。</p>
+<p>lpCaption：消息框的标题。</p>
+<p>uType：指定一个决定对话框的内容和行为的位标志集。</p>
+<p>如何定位？</p>
+<p>搜索MessageBoxW MessageBoxA 堆栈窗口反汇编窗口中跟随，然后再次跟第二层。</p>
+<p><img src="https://img.rruu.net/image/6051550bc79a6" alt="image-20210126233558483"></p>
+<p>跟着call看跳转到上面去找关键代码。</p>
+<p><img src="https://img.rruu.net/image/605155119dc8e" alt="image-20210126234009038"></p>
+<h2 id="SetWindowsText"><a href="#SetWindowsText" class="headerlink" title="SetWindowsText"></a>SetWindowsText</h2><p>设置窗口标题</p>
+<h2 id="CreateWindowStaion"><a href="#CreateWindowStaion" class="headerlink" title="CreateWindowStaion"></a>CreateWindowStaion</h2><p>蓝屏api，本来是正常的，飘零写了一个蓝屏的暗转。碰到这个一定要小心，这个蓝屏暗装超级恶心。</p>
+<p>CreateWindowStationA 此处下断点，nop填充，或者ret结束。ret结束需要保持堆栈平衡。</p>
+<p>RtlAdjustPrivilege 此处下断点，nop填充，或者ret结束。ret结束需要保持堆栈平衡。</p>
+<h2 id="ShellExecute"><a href="#ShellExecute" class="headerlink" title="ShellExecute"></a>ShellExecute</h2><p>打开url 文件等等</p>
+<p>ShellExecuteA ShellExecuteW</p>
+<h2 id="CreateWindowsEx"><a href="#CreateWindowsEx" class="headerlink" title="CreateWindowsEx"></a>CreateWindowsEx</h2><p>创建窗体</p>
+<p>CreateWindowsExA</p>
+<p>CreateWindowsExW</p>
+
       </div>
-    
-      <div class="post-item" title="Os-hackNos3">
-        <div class="time-m-d">2020-12-27</div>
-        <div class="title">
-          <a href="/2020/12/27/Os-hackNos3/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>Os-hackNos3</span>
-              
+              <a href="/2021/01/29/6.%E8%84%B1%E5%A3%B3%E6%96%B9%E6%B3%95/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-01-30
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="odin">
-        <div class="time-m-d">2020-12-27</div>
-        <div class="title">
-          <a href="/2020/12/27/odin/">
-            
-              
-                <span>odin</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MessageBox"><span class="toc-text">MessageBox</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SetWindowsText"><span class="toc-text">SetWindowsText</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CreateWindowStaion"><span class="toc-text">CreateWindowStaion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ShellExecute"><span class="toc-text">ShellExecute</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CreateWindowsEx"><span class="toc-text">CreateWindowsEx</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="Lampiao">
-        <div class="time-m-d">2020-12-26</div>
-        <div class="title">
-          <a href="/2020/12/26/Lampiao/">
-            
-              
-                <span>Lampiao</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Hackme1">
-        <div class="time-m-d">2020-12-26</div>
-        <div class="title">
-          <a href="/2020/12/26/Hackme1/">
-            
-              
-                <span>Hackme1</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Callme">
-        <div class="time-m-d">2020-12-25</div>
-        <div class="title">
-          <a href="/2020/12/25/Callme/">
-            
-              
-                <span>Callme</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux特权提升技术合集">
-        <div class="time-m-d">2020-12-25</div>
-        <div class="title">
-          <a href="/2020/12/25/Linux%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87%E6%8A%80%E6%9C%AF%E5%90%88%E9%9B%86/">
-            
-              
-                <span>Linux特权提升技术合集</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="school">
-        <div class="time-m-d">2020-12-25</div>
-        <div class="title">
-          <a href="/2020/12/25/school/">
-            
-              
-                <span>school</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux suid cp特权提升">
-        <div class="time-m-d">2020-12-24</div>
-        <div class="title">
-          <a href="/2020/12/24/linux_suid_cp%E6%8F%90%E6%9D%83/">
-            
-              
-                <span>Linux suid cp特权提升</span>
-              
-            
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
       </div>
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/2/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">3 / 4</span>
-    
-      <a href="/page/4/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">
