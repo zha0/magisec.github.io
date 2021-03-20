@@ -8,8 +8,6 @@
   <meta name="author" content="Weeds" />
   <meta name="description" content="像地里的野草肆意生长" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
     
@@ -84,151 +82,81 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="DC-8">
-        <div class="time-m-d">2021-01-13</div>
-        <div class="title">
-          <a href="/2021/01/13/DC-8/">
-            
-              
-                <span>DC-8</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title"></div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-03-20 20:26:44
+        </span>
+        
       </div>
-    
-      <div class="post-item" title="DC-7">
-        <div class="time-m-d">2021-01-10</div>
-        <div class="title">
-          <a href="/2021/01/10/DC-7/">
-            
-              
-                <span>DC-7</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h2 id="mail"><a href="#mail" class="headerlink" title="mail"></a>mail</h2><p><a href="mailto:&#119;&#x65;&#x65;&#x64;&#x73;&#x73;&#101;&#99;&#64;&#103;&#x6d;&#97;&#x69;&#108;&#46;&#99;&#111;&#109;">&#119;&#x65;&#x65;&#x64;&#x73;&#x73;&#101;&#99;&#64;&#103;&#x6d;&#97;&#x69;&#108;&#46;&#99;&#111;&#109;</a></p>
+
       </div>
-    
-      <div class="post-item" title="DC-6">
-        <div class="time-m-d">2021-01-08</div>
-        <div class="title">
-          <a href="/2021/01/08/DC-6/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>DC-6</span>
-              
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-03-20 20:26:44
+            </span>
             
-          </a>
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="DC-5">
-        <div class="time-m-d">2021-01-06</div>
-        <div class="title">
-          <a href="/2021/01/06/DC-5/">
-            
-              
-                <span>DC-5</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-4">
-        <div class="time-m-d">2021-01-03</div>
-        <div class="title">
-          <a href="/2021/01/03/DC-4/">
-            
-              
-                <span>DC-4</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-3">
-        <div class="time-m-d">2021-01-01</div>
-        <div class="title">
-          <a href="/2021/01/01/DC-3/">
-            
-              
-                <span>DC-3</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-2">
-        <div class="time-m-d">2020-12-30</div>
-        <div class="title">
-          <a href="/2020/12/30/DC-2/">
-            
-              
-                <span>DC-2</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-1">
-        <div class="time-m-d">2020-12-30</div>
-        <div class="title">
-          <a href="/2020/12/30/DC-1/">
-            
-              
-                <span>DC-1</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Hackme2">
-        <div class="time-m-d">2020-12-29</div>
-        <div class="title">
-          <a href="/2020/12/29/Hackme2/">
-            
-              
-                <span>Hackme2</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Five86-2">
-        <div class="time-m-d">2020-12-29</div>
-        <div class="title">
-          <a href="/2020/12/29/Five86-2/">
-            
-              
-                <span>Five86-2</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#mail"><span class="toc-text">mail</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">2 / 4</span>
-    
-      <a href="/page/3/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">
