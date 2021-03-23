@@ -11,7 +11,7 @@
   
   <title>
     
-      Windows API快速破解 
+      Kerberos之AS_REQ和AS_REP学习 
       
       
       |
@@ -115,45 +115,104 @@ MathJax = {
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">Windows API快速破解</div>
+      <div class="post-title">Kerberos之AS_REQ和AS_REP学习</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="Update time"></i>
-          2021-01-30 00:00:00
+          2021-03-23 14:45:33
         </span>
         
       </div>
       <div class="markdown-body">
-        <p>tips：</p>
-<p>mov edi，edi</p>
-<p>windows api调用特征</p>
-<h2 id="MessageBox"><a href="#MessageBox" class="headerlink" title="MessageBox"></a>MessageBox</h2><p>函数原型：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int&#96; &#96;WINAPI MessageBox(&#96;&#96;HWND&#96; &#96;hWnd,&#96;&#96;LPCTSTR&#96; &#96;lpText,&#96;&#96;LPCTSTR&#96; &#96;lpCaption,&#96;&#96;UINT&#96; &#96;uType);</span><br></pre></td></tr></table></figure>
-<p>hWnd：此参数代表消息框拥有的窗口。如果为NULL，则消息框没有拥有窗口。</p>
-<p>lpText：消息框的内容。</p>
-<p>lpCaption：消息框的标题。</p>
-<p>uType：指定一个决定对话框的内容和行为的位标志集。</p>
-<p>如何定位？</p>
-<p>搜索MessageBoxW MessageBoxA 堆栈窗口反汇编窗口中跟随，然后再次跟第二层。</p>
-<p><img src="https://img.rruu.net/image/6051550bc79a6" alt="image-20210126233558483"></p>
-<p>跟着call看跳转到上面去找关键代码。</p>
-<p><img src="https://img.rruu.net/image/605155119dc8e" alt="image-20210126234009038"></p>
-<h2 id="SetWindowsText"><a href="#SetWindowsText" class="headerlink" title="SetWindowsText"></a>SetWindowsText</h2><p>设置窗口标题</p>
-<h2 id="CreateWindowStaion"><a href="#CreateWindowStaion" class="headerlink" title="CreateWindowStaion"></a>CreateWindowStaion</h2><p>蓝屏api，本来是正常的，飘零写了一个蓝屏的暗转。碰到这个一定要小心，这个蓝屏暗装超级恶心。</p>
-<p>CreateWindowStationA 此处下断点，nop填充，或者ret结束。ret结束需要保持堆栈平衡。</p>
-<p>RtlAdjustPrivilege 此处下断点，nop填充，或者ret结束。ret结束需要保持堆栈平衡。</p>
-<h2 id="ShellExecute"><a href="#ShellExecute" class="headerlink" title="ShellExecute"></a>ShellExecute</h2><p>打开url 文件等等</p>
-<p>ShellExecuteA ShellExecuteW</p>
-<h2 id="CreateWindowsEx"><a href="#CreateWindowsEx" class="headerlink" title="CreateWindowsEx"></a>CreateWindowsEx</h2><p>创建窗体</p>
-<p>CreateWindowsExA</p>
-<p>CreateWindowsExW</p>
+        <h2 id="Kerberos介绍"><a href="#Kerberos介绍" class="headerlink" title="Kerberos介绍"></a>Kerberos介绍</h2><p>kerberos是由MIT提出的一种网络验证，使用密钥技术通过客户端与服务端提供的身份验证。</p>
+<p>Kerberos协议中一般有三个角色：</p>
+<ul>
+<li>用户（Client）</li>
+<li>服务器（Server）</li>
+<li>KDC（密钥分发中心）</li>
+</ul>
+<p>![img](D:\Users\Desktop\笔记\红队\Kerberos之AS_REQ 和AS_REP学习.assets\kerberos_environment.png)</p>
+<p>流程如下：</p>
+<ol>
+<li>Client向KDC发起AS_REQ,请求凭据是Client hash加密的时间戳。</li>
+<li>KDC使用Client hash进行解密，如果结果正确就返回用krbtgt hash加密的TGT票据，TGT里面包含PAC,PAC包含Client的sid，Client所在的组。</li>
+<li>TGS_REQ: Client凭借TGT票据向KDC发起针对特定服务的TGS_REQ请求</li>
+<li>TGS_REP: KDC使用krbtgt hash进行解密，如果结果正确，就返回用服务hash 加密的TGS票据(这一步不管用户有没有访问服务的权限，只要TGT正确，就返回TGS票据)</li>
+<li>AP_REQ: Client拿着TGS票据去请求服务</li>
+<li>AP_REP: 服务使用自己的hash解密TGS票据。如果解密正确，就拿着PAC去KDC那边问Client有没有访问权限，域控解密PAC。获取Client的sid，以及所在的组，再根据该服务的ACL，判断Client是否有访问服务的权限。</li>
+</ol>
+<h2 id="AS-REQ"><a href="#AS-REQ" class="headerlink" title="AS_REQ"></a>AS_REQ</h2><ol>
+<li><p>用户向KDC发起AS_REQ,请求凭据是用户 hash加密的时间戳。请求凭据放在PA_DATA里面。</p>
+</li>
+<li><p>pvno  kerberos的版本号</p>
+</li>
+<li><p>msg-type 请求类型，AS_REQ对应的就是KRB_AS_REQ(0x0a)</p>
+</li>
+<li><p>PA_DATA 认证消息列表</p>
+</li>
+</ol>
+<ul>
+<li>ENC_TIMESTAMP 用户hash加密时间戳。AS服务器使用用户hash进行解密，获得时间戳。如果能解密，且时间戳在一定范围内，则通过验证。</li>
+<li>PA_PAC_REQUEST 启用PAC支持的扩展，PAC包含在AS_REQ的响应body(AS_REP)。这里的value对应的是include=true或者include=false(KDC根据include的值来判断返回的票据中是否携带PAC)。</li>
+</ul>
+<ol start="5">
+<li><p>REQ_BODY</p>
+<ul>
+<li>cname 在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。</li>
+<li>sname 在AS_REQ里面sname是krbtgt</li>
+<li>realm 域名</li>
+<li>from 发送时间</li>
+<li>till rubeus和kekeo都是20370913024805Z，流量特征。</li>
+<li>nonce 随机生成的一个数kekeo/mimikatz nonce是12381973，rubeus nonce是1818848256，流量特征。</li>
+<li>etype  加密类型</li>
+</ul>
+</li>
+</ol>
+<h2 id="AS-REP"><a href="#AS-REP" class="headerlink" title="AS_REP"></a>AS_REP</h2><ol>
+<li>KDC使用用户 hash进行解密，如果结果正确返回用krbtgt hash加密的TGT票据，TGT里面包含PAC,PAC包含用户的sid，用户所在的组。</li>
+<li>msg-type AS_REQ的响应body对应的就是KRB_AS_REP(0x0b)</li>
+<li>crealm 域名</li>
+<li>cname 用户名</li>
+<li>ticket 用于TGS_REQ的认证。在AS_REQ请求里面是，是使用krbtgt的hash进行加密的，因此如果我们拥有krbtgt的hash就可以自己制作一个ticket，既黄金票据。</li>
+<li>enc_part 可以解密，key是用户hash，解密后得到Encryptionkey，Encryptionkey里面最重要的字段是session key，作为下阶段的认证密钥。</li>
+</ol>
+<h2 id="导出的票据"><a href="#导出的票据" class="headerlink" title="导出的票据"></a>导出的票据</h2><p>凭据里面最核心的东西是session-key和加密的ticket。</p>
+<ol>
+<li>mimikatz kekeo rubeus 生成kirbi</li>
+<li>impacket生成.ccache</li>
+<li>都包含session-key与加密的ticket，可以相互转换。</li>
+</ol>
+<h2 id="安全问题"><a href="#安全问题" class="headerlink" title="安全问题"></a>安全问题</h2><h3 id="pass-the-hash-和-pass-the-key"><a href="#pass-the-hash-和-pass-the-key" class="headerlink" title="pass the hash 和 pass the key"></a>pass the hash 和 pass the key</h3><p>在认证的时候使用的是用户的hash加密时间戳，就算使用的是密码也需要先加密成hash，然后再认证。</p>
+<h3 id="用户名枚举"><a href="#用户名枚举" class="headerlink" title="用户名枚举"></a>用户名枚举</h3><p>在AS_REQ中cname请求的用户名，存在与不存在返回包有差异，可以用户枚举域内用户。可以通过修改cname的值枚举用户名，有账号通过LDAP查询即可。如果有域内机器的system权限，则域内用户的用户名是机器名$.。</p>
+<h3 id="Password-Spraying"><a href="#Password-Spraying" class="headerlink" title="Password Spraying"></a>Password Spraying</h3><p>在已有用户名的情况下，可以尝试爆破密码。在实战中，通常使用密码喷射，即固定密码，不固定用户名。</p>
+<h3 id="AS-REPRoasting"><a href="#AS-REPRoasting" class="headerlink" title="AS-REPRoasting"></a>AS-REPRoasting</h3><p>对于域用户，如果设置了选项”Do not require Kerberos preauthentication”，此时向域控制器的88端口发送AS_REQ请求，对收到的AS_REP内容(enc-part底下的ciper，因为这部分是使用用户hash加密session-key，我们通过进行离线爆破就可以获得用户hash)重新组合，能够拼接成”Kerberos 5 AS-REP etype 23”(18200)的格式，接下来可以使用hashcat对其破解，最终获得该用户的明文口令。获取AS_REP里面enc-part部分里面的ciper，然后组装成前面32位16进制字符+$+后面的16进制字符得到repHash,然后<code>format(&quot;$krb5asrep$23$&#123;0&#125;@&#123;1&#125;:&#123;2&#125;&quot;, userName, domain, repHash)</code>得到字符串，交给hashcat 破解就行</p>
+<h3 id="黄金票据"><a href="#黄金票据" class="headerlink" title="黄金票据"></a>黄金票据</h3><p>在AS_REP中，ticket的encpart是使用krbtgt的hash进行加密的，我们可以抓取krbtg的hash，签发任意用户的tgt票据即黄金票据。</p>
+<h2 id="相关工具"><a href="#相关工具" class="headerlink" title="相关工具"></a>相关工具</h2><h3 id="rubeus"><a href="#rubeus" class="headerlink" title="rubeus"></a>rubeus</h3><ol>
+<li>asktgt 发送tgt请求包以base64输出</li>
+<li>As-repoasting 通过LDAP查询域内用户设置了选项”Do not require Kerberos preauthentication”，然后发AS_REQ的包，直接生成hash或者john可破解的格式。</li>
+</ol>
+<h3 id="impacket"><a href="#impacket" class="headerlink" title="impacket"></a>impacket</h3><ol>
+<li>getTGT 给定密码 hash 或者 aeskey 请求tgt保存为文件</li>
+<li>GetNPUsers 尝试设置了”Do not require Kerberos preauthentication”的用户并列出TGT，与JtR兼容。</li>
+<li>ticketer 发起合法的KDC请求并创建黄金票据or白银票据，票据格式为.ccache</li>
+</ol>
+<h3 id="mimikatz"><a href="#mimikatz" class="headerlink" title="mimikatz"></a>mimikatz</h3><ol>
+<li>kerberos::golden 制作黄金票据</li>
+</ol>
+<h3 id="nmap-NSE脚本"><a href="#nmap-NSE脚本" class="headerlink" title="nmap NSE脚本"></a>nmap NSE脚本</h3><ol>
+<li>krb5-enum-users 枚举域内用户</li>
+</ol>
+<h3 id="DomainPasswordSpray"><a href="#DomainPasswordSpray" class="headerlink" title="DomainPasswordSpray"></a>DomainPasswordSpray</h3><p>使用powershell编写，对域内进行密码喷射。先从LDAP获取域用户列表，然后去除锁定用户，接着进行密码喷射。</p>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><p>Book链接：<a target="_blank" rel="noopener" href="https://daiker.gitbook.io/windows-protocol/">https://daiker.gitbook.io/windows-protocol/</a></p>
+<p>Kerberos测试工具下载地址：<a target="_blank" rel="noopener" href="https://github.com/daikerSec/windows_protocol/raw/master/tools/kerberosGui.exe">https://github.com/daikerSec/windows_protocol/raw/master/tools/kerberosGui.exe</a></p>
+<p>对kerberos协议还有疑问的不妨看看这个，这篇文章特别有意思：<a target="_blank" rel="noopener" href="https://ares-x.com/2020/03/12/%E6%88%8F%E8%AF%B4%E5%9C%B0%E7%8B%B1%E4%B8%89%E5%A4%B4%E7%8A%AC/">https://ares-x.com/2020/03/12/%E6%88%8F%E8%AF%B4%E5%9C%B0%E7%8B%B1%E4%B8%89%E5%A4%B4%E7%8A%AC/</a></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2021/01/29/6.%E8%84%B1%E5%A3%B3%E6%96%B9%E6%B3%95/" target="_self">
+              <a href="/2021/01/30/7.Windows%20api%E5%BF%AB%E9%80%9F%E7%A0%B4%E8%A7%A3/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -162,13 +221,13 @@ MathJax = {
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="Update time"></i>
-              2021-01-30 00:00:00
+              2021-03-23 14:45:33
             </span>
             
           </div>
           <div class="post-foot-prev">
             
-              <a href="/2021/03/23/Kerberos%E4%B9%8BAS_REQ%E5%92%8CAS_REP%E5%AD%A6%E4%B9%A0/" target="_self">
+              <a href="/2021/03/23/Kerberos%E4%B9%8BTGS_REQ%E5%92%8CTGS_REP%E5%AD%A6%E4%B9%A0/" target="_self">
                 <span>Next</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>
@@ -181,7 +240,7 @@ MathJax = {
   <div class="post-catalog" id="catalog">
     <div class="title">Contents</div>
     <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MessageBox"><span class="toc-text">MessageBox</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SetWindowsText"><span class="toc-text">SetWindowsText</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CreateWindowStaion"><span class="toc-text">CreateWindowStaion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ShellExecute"><span class="toc-text">ShellExecute</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CreateWindowsEx"><span class="toc-text">CreateWindowsEx</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E4%BB%8B%E7%BB%8D"><span class="toc-text">Kerberos介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AS-REQ"><span class="toc-text">AS_REQ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AS-REP"><span class="toc-text">AS_REP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BC%E5%87%BA%E7%9A%84%E7%A5%A8%E6%8D%AE"><span class="toc-text">导出的票据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="toc-text">安全问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pass-the-hash-%E5%92%8C-pass-the-key"><span class="toc-text">pass the hash 和 pass the key</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E5%90%8D%E6%9E%9A%E4%B8%BE"><span class="toc-text">用户名枚举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Password-Spraying"><span class="toc-text">Password Spraying</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AS-REPRoasting"><span class="toc-text">AS-REPRoasting</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE"><span class="toc-text">黄金票据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E5%B7%A5%E5%85%B7"><span class="toc-text">相关工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#rubeus"><span class="toc-text">rubeus</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#impacket"><span class="toc-text">impacket</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mimikatz"><span class="toc-text">mimikatz</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nmap-NSE%E8%84%9A%E6%9C%AC"><span class="toc-text">nmap NSE脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DomainPasswordSpray"><span class="toc-text">DomainPasswordSpray</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5"><span class="toc-text">相关链接</span></a></li></ol>
     </div>
   </div>
 

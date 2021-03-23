@@ -8,10 +8,13 @@
   <meta name="author" content="Weeds" />
   <meta name="description" content="像地里的野草肆意生长" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      Kerberos协议关系 
+      
+      
+      |
     
      Weeds - 野草
   </title>
@@ -84,151 +87,140 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="DC-2">
-        <div class="time-m-d">2020-12-30</div>
-        <div class="title">
-          <a href="/2020/12/30/DC-2/">
-            
-              
-                <span>DC-2</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Kerberos协议关系</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-03-23 14:45:33
+        </span>
+        
       </div>
-    
-      <div class="post-item" title="DC-1">
-        <div class="time-m-d">2020-12-30</div>
-        <div class="title">
-          <a href="/2020/12/30/DC-1/">
-            
-              
-                <span>DC-1</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><p>假设HR是可信任的，公司实行的是工资保密制度。</p>
+<h2 id="身份验证"><a href="#身份验证" class="headerlink" title="身份验证"></a>身份验证</h2><p>如果二狗想给老板发消息，就要先通过HR来确定二狗就是二狗，然后HR再给二狗一个身份鉴定证书专门用于于老板聊天。</p>
+<p>如何确定二狗就是二狗？</p>
+<ul>
+<li>消息A 以二狗的工资作为加密密钥对12345</li>
+<li>消息B 将二狗的聊天窗口和聊天时间和123456加密到一个文件中</li>
+<li>消息C 消息B+老板大黄的名字（与老板对话）</li>
+<li>消息D 消息A解密以后，得到12345。将12345做key加密HR聊天窗口和时间</li>
+</ul>
+<p>HR怎么通过消息确定二狗即二狗？</p>
+<p>正向思考</p>
+<ul>
+<li>HR通过解密消息C得到了聊天窗口与聊天时间，以及123456。</li>
+<li>通过解密消息C得到的123456来解密消息D，得到二狗和HR的聊天窗口截图以及聊天时间。</li>
+<li>比对聊天窗口时间确认二狗是二狗</li>
+</ul>
+<p>反向思考</p>
+<p>假设这是一只假二狗</p>
+<ul>
+<li>假二狗不知道真二狗的公司，无法解密得到关键数字12345，也就没办法使用12345加密消息D。消息B是不被二狗操作的，二狗不可解密，只能由HR解密。</li>
+</ul>
+<h2 id="身份鉴证"><a href="#身份鉴证" class="headerlink" title="身份鉴证"></a>身份鉴证</h2><p>假设公司老板的公司为4块3毛1角</p>
+<ul>
+<li>消息E 老板工资，二狗聊天窗口，聊天时间，45678加密</li>
+<li>消息F HR利用消息C中解密得到的12345加密45678</li>
+</ul>
+<p>二狗收到消息</p>
+<ul>
+<li>用12345 解密消息F，得到45678.</li>
+<li>消息G 用45678加密HR聊天窗口与聊天时间</li>
+</ul>
+<p>老板收到消息</p>
+<ul>
+<li>用自己工资解密消息E得到45678</li>
+<li>使用解密消息E得到的45678解密消息G</li>
+<li>对比消息E与消息G 解密后的聊天窗口</li>
+</ul>
+<p>补充：假老板不知道真老板的工资，自然无法冒充老板。</p>
+<h2 id="故事解密"><a href="#故事解密" class="headerlink" title="故事解密"></a>故事解密</h2><p>故事中的角色与词汇转换Kerberos协议</p>
+<ul>
+<li>二狗 Client</li>
+<li>HR KDC</li>
+<li>老板大黄  Service/Server</li>
+<li>二狗的工资 Client NTLM Hash</li>
+<li>HR的工资 krbtgt NTLM Hash</li>
+<li>老板的工资 Service/Server NTLM Hash</li>
+<li>HR工资加密的截图，时间和12345  TGT 黄金票据</li>
+<li>老板工资加密的截图，时间和45678 TGS 白银票据</li>
+<li>12345    Client/TGS Sessionkey     </li>
+<li>45678    Client/Service Sessionkey </li>
+<li>聊天窗截图 Client ID</li>
+<li>聊天时间 Timestamp 时间戳</li>
+</ul>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><p>真的很佩服作者，可以通过一个故事生动形象的使读者理解Kerberos的认证流程。</p>
+<p><a target="_blank" rel="noopener" href="https://ares-x.com/2020/03/12/%E6%88%8F%E8%AF%B4%E5%9C%B0%E7%8B%B1%E4%B8%89%E5%A4%B4%E7%8A%AC/">https://ares-x.com/2020/03/12/%E6%88%8F%E8%AF%B4%E5%9C%B0%E7%8B%B1%E4%B8%89%E5%A4%B4%E7%8A%AC/</a></p>
+
       </div>
-    
-      <div class="post-item" title="Hackme2">
-        <div class="time-m-d">2020-12-29</div>
-        <div class="title">
-          <a href="/2020/12/29/Hackme2/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>Hackme2</span>
-              
+              <a href="/2021/03/23/NTLM%E4%B9%8BNTLM%E5%9F%BA%E7%A1%80/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-03-23 14:45:33
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="Five86-2">
-        <div class="time-m-d">2020-12-29</div>
-        <div class="title">
-          <a href="/2020/12/29/Five86-2/">
-            
-              
-                <span>Five86-2</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Five86-1">
-        <div class="time-m-d">2020-12-28</div>
-        <div class="title">
-          <a href="/2020/12/28/Five86-1/">
-            
-              
-                <span>Five86-1</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Chill_Hack">
-        <div class="time-m-d">2020-12-28</div>
-        <div class="title">
-          <a href="/2020/12/28/Chill-Hack/">
-            
-              
-                <span>Chill_Hack</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Os-hackNos3">
-        <div class="time-m-d">2020-12-27</div>
-        <div class="title">
-          <a href="/2020/12/27/Os-hackNos3/">
-            
-              
-                <span>Os-hackNos3</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="odin">
-        <div class="time-m-d">2020-12-27</div>
-        <div class="title">
-          <a href="/2020/12/27/odin/">
-            
-              
-                <span>odin</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Lampiao">
-        <div class="time-m-d">2020-12-26</div>
-        <div class="title">
-          <a href="/2020/12/26/Lampiao/">
-            
-              
-                <span>Lampiao</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Hackme1">
-        <div class="time-m-d">2020-12-26</div>
-        <div class="title">
-          <a href="/2020/12/26/Hackme1/">
-            
-              
-                <span>Hackme1</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E6%8F%90"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81"><span class="toc-text">身份验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BA%AB%E4%BB%BD%E9%89%B4%E8%AF%81"><span class="toc-text">身份鉴证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%85%E4%BA%8B%E8%A7%A3%E5%AF%86"><span class="toc-text">故事解密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5"><span class="toc-text">相关链接</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/2/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">3 / 4</span>
-    
-      <a href="/page/4/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">

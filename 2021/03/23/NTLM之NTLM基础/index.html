@@ -11,7 +11,7 @@
   
   <title>
     
-      Windows API快速破解 
+      NTLM之NTLM基础 
       
       
       |
@@ -115,45 +115,116 @@ MathJax = {
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">Windows API快速破解</div>
+      <div class="post-title">NTLM之NTLM基础</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="Update time"></i>
-          2021-01-30 00:00:00
+          2021-03-23 14:45:33
         </span>
         
       </div>
       <div class="markdown-body">
-        <p>tips：</p>
-<p>mov edi，edi</p>
-<p>windows api调用特征</p>
-<h2 id="MessageBox"><a href="#MessageBox" class="headerlink" title="MessageBox"></a>MessageBox</h2><p>函数原型：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int&#96; &#96;WINAPI MessageBox(&#96;&#96;HWND&#96; &#96;hWnd,&#96;&#96;LPCTSTR&#96; &#96;lpText,&#96;&#96;LPCTSTR&#96; &#96;lpCaption,&#96;&#96;UINT&#96; &#96;uType);</span><br></pre></td></tr></table></figure>
-<p>hWnd：此参数代表消息框拥有的窗口。如果为NULL，则消息框没有拥有窗口。</p>
-<p>lpText：消息框的内容。</p>
-<p>lpCaption：消息框的标题。</p>
-<p>uType：指定一个决定对话框的内容和行为的位标志集。</p>
-<p>如何定位？</p>
-<p>搜索MessageBoxW MessageBoxA 堆栈窗口反汇编窗口中跟随，然后再次跟第二层。</p>
-<p><img src="https://img.rruu.net/image/6051550bc79a6" alt="image-20210126233558483"></p>
-<p>跟着call看跳转到上面去找关键代码。</p>
-<p><img src="https://img.rruu.net/image/605155119dc8e" alt="image-20210126234009038"></p>
-<h2 id="SetWindowsText"><a href="#SetWindowsText" class="headerlink" title="SetWindowsText"></a>SetWindowsText</h2><p>设置窗口标题</p>
-<h2 id="CreateWindowStaion"><a href="#CreateWindowStaion" class="headerlink" title="CreateWindowStaion"></a>CreateWindowStaion</h2><p>蓝屏api，本来是正常的，飘零写了一个蓝屏的暗转。碰到这个一定要小心，这个蓝屏暗装超级恶心。</p>
-<p>CreateWindowStationA 此处下断点，nop填充，或者ret结束。ret结束需要保持堆栈平衡。</p>
-<p>RtlAdjustPrivilege 此处下断点，nop填充，或者ret结束。ret结束需要保持堆栈平衡。</p>
-<h2 id="ShellExecute"><a href="#ShellExecute" class="headerlink" title="ShellExecute"></a>ShellExecute</h2><p>打开url 文件等等</p>
-<p>ShellExecuteA ShellExecuteW</p>
-<h2 id="CreateWindowsEx"><a href="#CreateWindowsEx" class="headerlink" title="CreateWindowsEx"></a>CreateWindowsEx</h2><p>创建窗体</p>
-<p>CreateWindowsExA</p>
-<p>CreateWindowsExW</p>
+        <h2 id="LM-hash-amp-NTLM-hash"><a href="#LM-hash-amp-NTLM-hash" class="headerlink" title="LM hash &amp; NTLM hash"></a>LM hash &amp; NTLM hash</h2><ul>
+<li><p>Windows内部只保存密码的hash</p>
+<ol>
+<li>本机用户的hash密码放在SAM文件</li>
+<li>域内用户的hash密码放在域控的NTDS.DIT文件中</li>
+</ol>
+</li>
+<li><pre><code>  Administrator:500:AAD3B435B51404EEAAD3B435B51404EE:31D6CFE0D16AE931B73C59D7E0C089C0:::
+  AAD3B435B51404EEAAD3B435B51404EE是LM hash
+  31D6CFE0D16AE931B73C59D7E0C089C0是NTLM hash</code></pre>
+</li>
+</ul>
+<h3 id="LM-Hash"><a href="#LM-Hash" class="headerlink" title="LM Hash"></a>LM Hash</h3><p>加密规则：</p>
+<ol>
+<li>用户的密码转换为大写，密码转换为16进制字符串，不足14字节将会用0来再后面补全。</li>
+<li>密码的16进制字符串被分成两个7byte部分。每部分转换成比特流，并且长度位56bit，长度不足使用0在左边补齐长度</li>
+<li>再分7bit为一组,每组末尾加0，再组成一组</li>
+<li>上步骤得到的二组，分别作为key 为 “<code>KGS!@#$%</code>“进行DES加密。</li>
+<li>将加密后的两组拼接在一起，得到最终LM HASH值。</li>
+</ol>
+<p>规则漏洞：</p>
+<ul>
+<li>密码长度不超过14个字符</li>
+<li>密码不区分大小写，先转换成大写，所有密码都转换为大写。</li>
+<li>分组使用DES加密，如果密码小于7位那么第二组加密后的结果是aad3b435b51404ee。如果lmhash结尾aad3b435b51404ee则密码小于7位。</li>
+<li>一串密码，分为7+7。则这串密码的有效强度小于14位密码加密的强度。</li>
+<li>Des密码强度不高</li>
+</ul>
+<h2 id="NTLM-Hash"><a href="#NTLM-Hash" class="headerlink" title="NTLM Hash"></a>NTLM Hash</h2><p>Windows操作系统LM 与 NTLM 支持情况：</p>
+<p><img src="D:\Users\Desktop\笔记\红队\NTLM之NTLM基础.assets\t01b500665781a9a455.png" alt="img"></p>
+<p>NTLM Hash计算</p>
+<ol>
+<li>先将用户密码转换为十六进制格式。</li>
+<li>将十六进制格式的密码进行Unicode编码。</li>
+<li>使用MD4摘要算法对Unicode编码数据进行Hash计算。</li>
+</ol>
+<h2 id="NTLM身份验证"><a href="#NTLM身份验证" class="headerlink" title="NTLM身份验证"></a>NTLM身份验证</h2><p>NTLM验证是一种Challenge/Response 验证机制</p>
+<ol>
+<li>协商</li>
+<li>质询</li>
+<li>身份验证</li>
+</ol>
+<p><img src="D:\Users\Desktop\笔记\红队\NTLM之NTLM基础.assets\t01d0dfdfd6d7007c80.png" alt="img"></p>
+<p>详细的过程：<a target="_blank" rel="noopener" href="https://daiker.gitbook.io/windows-protocol/ntlm-pian/4#0x02-ntlm-shen-fen-yan-zheng">https://daiker.gitbook.io/windows-protocol/ntlm-pian/4#0x02-ntlm-shen-fen-yan-zheng</a></p>
+<h2 id="相关安全问题"><a href="#相关安全问题" class="headerlink" title="相关安全问题"></a>相关安全问题</h2><h3 id="PTH（pass-the-hash）"><a href="#PTH（pass-the-hash）" class="headerlink" title="PTH（pass the hash）"></a>PTH（pass the hash）</h3><p>hash传递，在type3进行response的时候，客户端使用用户的hash计算的，而不是用户密码计算的。所以，我们可以使用hash模拟用户登录。微软发布了kb2871997，可以缓解哈希传递攻击同时阻止mimikatz抓取密码。为什么说是缓解呢？当我们使用ntlm认证，RID非500的会受到UAC限制，RID为500的用户登录之后可以完全管理特权。</p>
+<p>这里再说一点，HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\LocalAccountTokenFilterPolicy项存在且配置为一，讲未过滤非RID500的用户连接，并且可以成功传递hash。</p>
+<h3 id="NTLM信息收集"><a href="#NTLM信息收集" class="headerlink" title="NTLM信息收集"></a>NTLM信息收集</h3><p>在type2返回Challenge的过程中，同时返回了操作系统类型，主机名，netbios名等等。ntlm是一个嵌入式的协议，消息的传输依赖于使用ntlm的上层协议，比如SMB,LDAP,HTTP等。我们在能跟服务器进行ntlm 交流中，给服务器发送一个type1的请求，服务器返回type2的响应，这一步，我们就可以得到很多信息。</p>
+<h3 id="NTLM-Relay"><a href="#NTLM-Relay" class="headerlink" title="NTLM Relay"></a>NTLM Relay</h3><h4 id="发起ntlm请求"><a href="#发起ntlm请求" class="headerlink" title="发起ntlm请求"></a>发起ntlm请求</h4><ol>
+<li>desktop.ini</li>
+<li>scf文件</li>
+<li>用户头像</li>
+<li>系统自带命令外带unc传输ntlm</li>
+<li>xss 传输 只支持ie与edge</li>
+<li>outlook邮箱</li>
+<li>pdf</li>
+<li>office</li>
+<li>mysql</li>
+<li>XXE</li>
+<li>SSRF</li>
+<li>打印机漏洞</li>
+</ol>
+<h4 id="NBNS和LLMNR"><a href="#NBNS和LLMNR" class="headerlink" title="NBNS和LLMNR"></a>NBNS和LLMNR</h4><h5 id="LLMNR"><a href="#LLMNR" class="headerlink" title="LLMNR"></a>LLMNR</h5><p>LLMNR是一种基于DNS数据包格式。Windows解析域名顺序是 Hosts&gt;DNs&gt;LLMNR&gt;NBNS</p>
+<p>LLMNR解析过程：</p>
+<ol>
+<li>检查本地 NetBIOS 缓存</li>
+<li>如果缓存中没有则会像当前子网域发送广播</li>
+<li>当前子网域的其他主机收到并检查广播包，如果没有主机响应则请求失败</li>
+</ol>
+<p>由于使用广播包的方式，我们可以通过类似于ARP投毒的方式进行攻击，使用工具Responder。</p>
+<h5 id="NBNS"><a href="#NBNS" class="headerlink" title="NBNS"></a>NBNS</h5><p>Netbios解析过程：</p>
+<ol>
+<li>检查本地 NetBIOS 缓存</li>
+<li>如果缓存中没有请求的名称且已配置了 WINS 服务器，接下来则会向 WINS 服务器发出请求</li>
+<li>如果没有配置 WINS 服务器或 WINS 服务器无响应则会向当前子网域发送广播</li>
+<li>如果发送广播后无任何主机响应则会读取本地的 lmhosts 文件</li>
+</ol>
+<p>跟LLMNR同样使用广播包，存在同样的安全问题。</p>
+<h4 id="WDAP和Mitm6"><a href="#WDAP和Mitm6" class="headerlink" title="WDAP和Mitm6"></a>WDAP和Mitm6</h4><h5 id="wpad"><a href="#wpad" class="headerlink" title="wpad"></a>wpad</h5><p>wpad 全称是Web Proxy Auto-Discovery Protocol ，通过让浏览器自动发现代理服务器，定位代理配置文件PAC(在下文也叫做PAC文件或者wpad.dat)，下载编译并运行，最终自动使用代理访问网络。</p>
+<p>流程图：</p>
+<img src="D:\Users\Desktop\笔记\红队\NTLM之NTLM基础.assets\t019d8c1f08fefc8c39.png" alt="img" style="zoom: 33%;" />
+
+<p>查询PAC文件顺序</p>
+<ol>
+<li>通过DHCP服务器</li>
+<li>查询WPAD主机的IP<ul>
+<li>Hosts</li>
+<li>DNS (cache / server) </li>
+<li>LLMNR</li>
+<li>NBNS </li>
+</ul>
+</li>
+</ol>
+<h5 id="配合LLMNR-NBNS投毒"><a href="#配合LLMNR-NBNS投毒" class="headerlink" title="配合LLMNR/NBNS投毒"></a>配合LLMNR/NBNS投毒</h5><p>用户在访问网页时，首先会查询PAC文件的位置。查询的地址是WPAD/wpad.dat。如果没有在域内专门配置这个域名的话，那么DNS解析失败的话，就会使用LLMNR发起广播包询问WPAD对应的ip是多少,这个时候我们就可以进行LLMNR投毒和NBNS投毒。Responder可以很方便得实现。</p>
+<h5 id="配合DHCPv6"><a href="#配合DHCPv6" class="headerlink" title="配合DHCPv6"></a>配合DHCPv6</h5><p>ipv6比ipv4优先级高，我们可以伪造ipv6 dhcp服务器。mitm6：<a target="_blank" rel="noopener" href="https://github.com/fox-it/mitm6">https://github.com/fox-it/mitm6</a></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2021/01/29/6.%E8%84%B1%E5%A3%B3%E6%96%B9%E6%B3%95/" target="_self">
+              <a href="/2021/03/23/Kerberos%E4%B9%8BTGS_REQ%E5%92%8CTGS_REP%E5%AD%A6%E4%B9%A0/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -162,13 +233,13 @@ MathJax = {
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="Update time"></i>
-              2021-01-30 00:00:00
+              2021-03-23 14:45:33
             </span>
             
           </div>
           <div class="post-foot-prev">
             
-              <a href="/2021/03/23/Kerberos%E4%B9%8BAS_REQ%E5%92%8CAS_REP%E5%AD%A6%E4%B9%A0/" target="_self">
+              <a href="/2021/03/23/Kerberos%E5%8D%8F%E8%AE%AE%E5%85%B3%E7%B3%BB/" target="_self">
                 <span>Next</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>
@@ -181,7 +252,7 @@ MathJax = {
   <div class="post-catalog" id="catalog">
     <div class="title">Contents</div>
     <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MessageBox"><span class="toc-text">MessageBox</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SetWindowsText"><span class="toc-text">SetWindowsText</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CreateWindowStaion"><span class="toc-text">CreateWindowStaion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ShellExecute"><span class="toc-text">ShellExecute</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CreateWindowsEx"><span class="toc-text">CreateWindowsEx</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#LM-hash-amp-NTLM-hash"><span class="toc-text">LM hash &amp; NTLM hash</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LM-Hash"><span class="toc-text">LM Hash</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NTLM-Hash"><span class="toc-text">NTLM Hash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NTLM%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81"><span class="toc-text">NTLM身份验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="toc-text">相关安全问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PTH%EF%BC%88pass-the-hash%EF%BC%89"><span class="toc-text">PTH（pass the hash）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NTLM%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">NTLM信息收集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NTLM-Relay"><span class="toc-text">NTLM Relay</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%91%E8%B5%B7ntlm%E8%AF%B7%E6%B1%82"><span class="toc-text">发起ntlm请求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NBNS%E5%92%8CLLMNR"><span class="toc-text">NBNS和LLMNR</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#LLMNR"><span class="toc-text">LLMNR</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#NBNS"><span class="toc-text">NBNS</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WDAP%E5%92%8CMitm6"><span class="toc-text">WDAP和Mitm6</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#wpad"><span class="toc-text">wpad</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E5%90%88LLMNR-NBNS%E6%8A%95%E6%AF%92"><span class="toc-text">配合LLMNR&#x2F;NBNS投毒</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E5%90%88DHCPv6"><span class="toc-text">配合DHCPv6</span></a></li></ol></li></ol></li></ol></li></ol>
     </div>
   </div>
 
