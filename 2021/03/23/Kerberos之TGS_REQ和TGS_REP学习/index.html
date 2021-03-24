@@ -147,7 +147,7 @@ MathJax = {
 <h2 id="S4U2self"><a href="#S4U2self" class="headerlink" title="S4U2self"></a>S4U2self</h2><p>S4U2SELF使得服务可以代表用户获取服务本身的Kerberos票据。服务可以获取用户的可转发的TGS票据，用于后期不使用Kerberos方式服务进行身份验证。</p>
 <p>重点：服务代表用户获取针对服务自身的Kerberos票据的过程，服务是不需要用户凭据的。</p>
 <p>前提条件：已有通过KDC验证的TGT</p>
-<p>![img](D:\Users\Desktop\笔记\红队\Kerberos之TGS_REQ &amp; TGS_REP学习.assets\image004.png)</p>
+<p>![img](./Kerberos之TGS_REQ &amp; TGS_REP学习.assets/image004.png)</p>
 <ol>
 <li>服务1使用S4U2self代表用户admin获取针对服务本身的Kerberos。则服务1代表用户向服务1本身发起请求，所以cname是服务1，sname也是服务1。</li>
 <li>如果TGS支持PA_FOR_USER扩展，则TGS在步骤2中通过KRB_TGS_REP消息返回用户的服务票证。需要满足以下要求：<ul>
@@ -160,7 +160,7 @@ MathJax = {
 <p>注意：如果用户的UserAccountControl设置USER_NOT_DELEGATED位，则无法转发TGS。即设置敏感用户，不能被委派。</p>
 <h2 id="S4U2proxy"><a href="#S4U2proxy" class="headerlink" title="S4U2proxy"></a>S4U2proxy</h2><p>s4u2proxy使得服务1可以使用来自s4u2self用户本身的授权，然后通过TGS向KDC请求访问服务2的TGS且只能访问服务2。</p>
 <p>s4u2proxy流程</p>
-<p>![img](D:\Users\Desktop\笔记\红队\Kerberos之TGS_REQ &amp; TGS_REP学习.assets\image006.png)</p>
+<p>![img](./Kerberos之TGS_REQ &amp; TGS_REP学习.assets/image006.png)</p>
 <p>服务1代表用户获取访问服务2的服务票据。服务1发送KRB_TGS_REQ请求，将服务1的服务票据作为请求中的AddtionTicket。需要满足以下条件：</p>
 <ol>
 <li>从S4u2self阶段获取TGS票据放在AddtionTicket</li>

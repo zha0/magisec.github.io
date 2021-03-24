@@ -153,7 +153,7 @@ MathJax = {
 <li>Des密码强度不高</li>
 </ul>
 <h2 id="NTLM-Hash"><a href="#NTLM-Hash" class="headerlink" title="NTLM Hash"></a>NTLM Hash</h2><p>Windows操作系统LM 与 NTLM 支持情况：</p>
-<p><img src="D:\Users\Desktop\笔记\红队\NTLM之NTLM基础.assets\t01b500665781a9a455.png" alt="img"></p>
+<p><img src="./NTLM%E4%B9%8BNTLM%E5%9F%BA%E7%A1%80.assets/t01b500665781a9a455.png" alt="img"></p>
 <p>NTLM Hash计算</p>
 <ol>
 <li>先将用户密码转换为十六进制格式。</li>
@@ -166,7 +166,7 @@ MathJax = {
 <li>质询</li>
 <li>身份验证</li>
 </ol>
-<p><img src="D:\Users\Desktop\笔记\红队\NTLM之NTLM基础.assets\t01d0dfdfd6d7007c80.png" alt="img"></p>
+<p><img src="./NTLM%E4%B9%8BNTLM%E5%9F%BA%E7%A1%80.assets/t01d0dfdfd6d7007c80.png" alt="img"></p>
 <p>详细的过程：<a target="_blank" rel="noopener" href="https://daiker.gitbook.io/windows-protocol/ntlm-pian/4#0x02-ntlm-shen-fen-yan-zheng">https://daiker.gitbook.io/windows-protocol/ntlm-pian/4#0x02-ntlm-shen-fen-yan-zheng</a></p>
 <h2 id="相关安全问题"><a href="#相关安全问题" class="headerlink" title="相关安全问题"></a>相关安全问题</h2><h3 id="PTH（pass-the-hash）"><a href="#PTH（pass-the-hash）" class="headerlink" title="PTH（pass the hash）"></a>PTH（pass the hash）</h3><p>hash传递，在type3进行response的时候，客户端使用用户的hash计算的，而不是用户密码计算的。所以，我们可以使用hash模拟用户登录。微软发布了kb2871997，可以缓解哈希传递攻击同时阻止mimikatz抓取密码。为什么说是缓解呢？当我们使用ntlm认证，RID非500的会受到UAC限制，RID为500的用户登录之后可以完全管理特权。</p>
 <p>这里再说一点，HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\LocalAccountTokenFilterPolicy项存在且配置为一，讲未过滤非RID500的用户连接，并且可以成功传递hash。</p>
@@ -203,7 +203,7 @@ MathJax = {
 <p>跟LLMNR同样使用广播包，存在同样的安全问题。</p>
 <h4 id="WDAP和Mitm6"><a href="#WDAP和Mitm6" class="headerlink" title="WDAP和Mitm6"></a>WDAP和Mitm6</h4><h5 id="wpad"><a href="#wpad" class="headerlink" title="wpad"></a>wpad</h5><p>wpad 全称是Web Proxy Auto-Discovery Protocol ，通过让浏览器自动发现代理服务器，定位代理配置文件PAC(在下文也叫做PAC文件或者wpad.dat)，下载编译并运行，最终自动使用代理访问网络。</p>
 <p>流程图：</p>
-<img src="D:\Users\Desktop\笔记\红队\NTLM之NTLM基础.assets\t019d8c1f08fefc8c39.png" alt="img" style="zoom: 33%;" />
+<img src="./NTLM之NTLM基础.assets/t019d8c1f08fefc8c39.png" alt="img" style="zoom: 33%;" />
 
 <p>查询PAC文件顺序</p>
 <ol>
