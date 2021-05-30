@@ -8,8 +8,6 @@
   <meta name="author" content="Weeds" />
   <meta name="description" content="像地里的野草肆意生长" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
     
@@ -84,58 +82,108 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="平行越权漏洞挖掘与phpsuid特权提升">
-        <div class="time-m-d">2020-12-24</div>
-        <div class="title">
-          <a href="/2020/12/24/%E5%B9%B3%E8%A1%8C%E8%B6%8A%E6%9D%83%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E4%B8%8Ephpsuid%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87/">
-            
-              
-                <span>平行越权漏洞挖掘与phpsuid特权提升</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title"></div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-05-30 19:36:07
+        </span>
+        
       </div>
-    
-      <div class="post-item" title="Linux 虚拟容器 lxc提权">
-        <div class="time-m-d">2020-12-23</div>
-        <div class="title">
-          <a href="/2020/12/23/Linux_lxc%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87/">
-            
-              
-                <span>Linux 虚拟容器 lxc提权</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h1 id="super-duper"><a href="#super-duper" class="headerlink" title="super-duper"></a>super-duper</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/magisec/super-duper">https://github.com/magisec/super-duper</a></p>
+<p>使用混淆与加密规避查杀，基于Python3开发，无任何依赖。</p>
+<h2 id="混淆函数"><a href="#混淆函数" class="headerlink" title="混淆函数"></a>混淆函数</h2><p>可用混淆函数列表：</p>
+<ul>
+<li>Confuse_uuid 使用uuid加密</li>
+<li>Confuse_xor_str 对str进行xor混淆</li>
+<li>Confuse_xor_file 对byte进行xor混淆</li>
+<li>Confuse_gzip_xor 使用gzip压缩数据 &gt; Xor异或混淆 适用于体积较大的工具，效果相当不错。</li>
+<li>Confuse_uuid_xor_gzip_hex 使用uuid加密 &gt; xor异或 &gt; gzip压缩 &gt; hex 进行混淆，效果很好，付出代价同样大，更适用于小体积的shellcode。</li>
+</ul>
+<h2 id="使用帮助"><a href="#使用帮助" class="headerlink" title="使用帮助"></a>使用帮助</h2><p>查看帮助</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python confuse_tools.py --help</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210530194450066.png" alt="image-20210530194450066"></p>
+<p>调用Confuse_gzip_xor对mimikatz进行混淆</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python confuse_tools.py -s mimi.txt -d mimi.raw -f Confuse_gzip_xor</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210530193157125.png" alt="image-20210530193157125"></p>
+<p>我们可以获取到随机生成的xor_key。这个key，请自行解密。</p>
+<h3 id="vt查杀"><a href="#vt查杀" class="headerlink" title="vt查杀"></a>vt查杀</h3><p>mimi.txt（混淆前）</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210530193400861.png" alt="image-20210530193400861"></p>
+<p>mimi.raw （混淆后）</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210530193431499.png" alt="image-20210530193431499"></p>
+
       </div>
-    
-      <div class="post-item" title="Shellcode免杀入门教程">
-        <div class="time-m-d">2020-12-23</div>
-        <div class="title">
-          <a href="/2020/12/23/shellcode%E5%85%8D%E6%9D%80/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>Shellcode免杀入门教程</span>
-              
+              <a href="/2021/05/30/%E5%9F%BA%E4%BA%8Esuid%E7%9A%84Linux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%8A%AB%E6%8C%81%E6%8F%90%E6%9D%83/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-05-30 19:36:07
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#super-duper"><span class="toc-text">super-duper</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%B7%E6%B7%86%E5%87%BD%E6%95%B0"><span class="toc-text">混淆函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%B8%AE%E5%8A%A9"><span class="toc-text">使用帮助</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vt%E6%9F%A5%E6%9D%80"><span class="toc-text">vt查杀</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/4/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">5 / 5</span>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">
