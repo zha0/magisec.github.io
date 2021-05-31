@@ -11,6 +11,11 @@
   
   <title>
     
+      Golang免杀Tips 
+      
+      
+      |
+    
      hacktrick
   </title>
 
@@ -82,149 +87,88 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="Golang免杀Tips">
-        <div class="time-m-d">2021-05-31</div>
-        <div class="title">
-          <a href="/2021/05/31/Golang%E5%85%8D%E6%9D%80Tips/">
-            
-              
-                <span>Golang免杀Tips</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Golang免杀Tips</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-05-31 19:00:00
+        </span>
+        
       </div>
-    
-      <div class="post-item" title="super-duper">
-        <div class="time-m-d">2021-05-30</div>
-        <div class="title">
-          <a href="/2021/05/30/super-duper/">
-            
-              
-                <span>super-duper</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h1 id="Golang免杀Tips"><a href="#Golang免杀Tips" class="headerlink" title="Golang免杀Tips"></a>Golang免杀Tips</h1><p>上次更新一篇我自己开发的shellcode混淆工具的使用，这里给出基于Golang的解密方式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;bytes&quot;</span><br><span class="line">	&quot;compress&#x2F;gzip&quot;</span><br><span class="line">	&quot;io&#x2F;ioutil&quot;</span><br><span class="line">	&quot;syscall&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;基于str的xor混淆</span><br><span class="line">func xor_decrypt_Str(input string, key int) (output string) &#123;</span><br><span class="line">	for i :&#x3D; 0; i &lt; len(input); i++ &#123;</span><br><span class="line">		output +&#x3D; string(int(input[i]) ^ key)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return output</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;基于byte的xor混淆</span><br><span class="line">func xor_decrypt_Byte(input []byte, key int) (output []byte) &#123;</span><br><span class="line">	output &#x3D; make([]byte, len(input))</span><br><span class="line">	for i, _ :&#x3D; range input &#123;</span><br><span class="line">		output[i] &#x3D; input[i] ^ byte(key)</span><br><span class="line">	&#125;</span><br><span class="line">	return output</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;gzip解压</span><br><span class="line">func decompress_Gzip(data []byte) []byte &#123;</span><br><span class="line">	gr, _ :&#x3D; gzip.NewReader(bytes.NewBuffer(data))</span><br><span class="line">	defer gr.Close()</span><br><span class="line">	data, _ &#x3D; ioutil.ReadAll(gr)</span><br><span class="line">	return data</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;基于xor混淆的GetProcAddress</span><br><span class="line">func decrypt_GetProcAddress(module syscall.Handle, decryptname string, key int) (proc uintptr) &#123;</span><br><span class="line">	procname :&#x3D; xor_decrypt_Str(decryptname, key)</span><br><span class="line">	proc, _ &#x3D; syscall.GetProcAddress(module, procname)</span><br><span class="line">	&#x2F;&#x2F;fmt.Println(procname, &quot;:&quot;, proc)</span><br><span class="line">	return proc</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;基于xor混淆的LoadLibrary</span><br><span class="line">func decrypt_LoadLibrary(decryptname string, key int) (handle syscall.Handle) &#123;</span><br><span class="line">	libname :&#x3D; xor_decrypt_Str(decryptname, key)</span><br><span class="line">	handle, _ &#x3D; syscall.LoadLibrary(libname)</span><br><span class="line">	&#x2F;&#x2F;fmt.Println(libname, &quot;:&quot;, handle)</span><br><span class="line">	return handle</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
       </div>
-    
-      <div class="post-item" title="基于suid的Linux环境变量劫持提权">
-        <div class="time-m-d">2021-04-16</div>
-        <div class="title">
-          <a href="/2021/04/16/%E5%9F%BA%E4%BA%8Esuid%E7%9A%84Linux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%8A%AB%E6%8C%81%E6%8F%90%E6%9D%83/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>基于suid的Linux环境变量劫持提权</span>
-              
+              <a href="/2021/05/30/super-duper/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-05-31 19:00:00
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="特权提升枚举">
-        <div class="time-m-d">2021-04-06</div>
-        <div class="title">
-          <a href="/2021/04/06/%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87%E6%9E%9A%E4%B8%BE/">
-            
-              
-                <span>特权提升枚举</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Windows文件传输">
-        <div class="time-m-d">2021-04-05</div>
-        <div class="title">
-          <a href="/2021/04/05/Windows%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93/">
-            
-              
-                <span>Windows文件传输</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="反弹shell备忘录">
-        <div class="time-m-d">2021-04-05</div>
-        <div class="title">
-          <a href="/2021/04/05/%E5%8F%8D%E5%BC%B9shell%E5%A4%87%E5%BF%98%E5%BD%95/">
-            
-              
-                <span>反弹shell备忘录</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux切换交互shell">
-        <div class="time-m-d">2021-04-05</div>
-        <div class="title">
-          <a href="/2021/04/05/Linux%E5%88%87%E6%8D%A2%E4%BA%A4%E4%BA%92%E5%BC%8F%E5%A4%96%E5%A3%B3/">
-            
-              
-                <span>Linux切换交互shell</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Kerberos协议关系">
-        <div class="time-m-d">2021-03-23</div>
-        <div class="title">
-          <a href="/2021/03/23/Kerberos%E5%8D%8F%E8%AE%AE%E5%85%B3%E7%B3%BB/">
-            
-              
-                <span>Kerberos协议关系</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Kerberos之TGS_REQ和TGS_REP学习">
-        <div class="time-m-d">2021-03-23</div>
-        <div class="title">
-          <a href="/2021/03/23/Kerberos%E4%B9%8BTGS_REQ%E5%92%8CTGS_REP%E5%AD%A6%E4%B9%A0/">
-            
-              
-                <span>Kerberos之TGS_REQ和TGS_REP学习</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="NTLM之NTLM基础">
-        <div class="time-m-d">2021-03-23</div>
-        <div class="title">
-          <a href="/2021/03/23/NTLM%E4%B9%8BNTLM%E5%9F%BA%E7%A1%80/">
-            
-              
-                <span>NTLM之NTLM基础</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Golang%E5%85%8D%E6%9D%80Tips"><span class="toc-text">Golang免杀Tips</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
   </div>
-  <nav class="post-navigation">
-    
-    <span class="page-num">1 / 5</span>
-    
-      <a href="/page/2/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">
