@@ -8,10 +8,13 @@
   <meta name="author" content="hacktrick" />
   <meta name="description" content="hacktrick" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      C#运行powershell Tips 
+      
+      
+      |
     
      hacktrick
   </title>
@@ -84,151 +87,91 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="Plary">
-        <div class="time-m-d">2021-01-23</div>
-        <div class="title">
-          <a href="/2021/01/23/Player/">
-            
-              
-                <span>Plary</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">C#运行powershell Tips</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-06-03 20:56:25
+        </span>
+        
       </div>
-    
-      <div class="post-item" title="netstart">
-        <div class="time-m-d">2021-01-20</div>
-        <div class="title">
-          <a href="/2021/01/20/netstart/">
-            
-              
-                <span>netstart</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h1 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;fmt&quot;</span><br><span class="line">	&quot;syscall&quot;</span><br><span class="line">	&quot;unsafe&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">type ulong int32</span><br><span class="line">type ulong_ptr uintptr</span><br><span class="line"></span><br><span class="line">type PROCESSENTRY32 struct &#123;</span><br><span class="line">	dwSize              ulong</span><br><span class="line">	cntUsage            ulong</span><br><span class="line">	th32ProcessID       ulong</span><br><span class="line">	th32DefaultHeapID   ulong_ptr</span><br><span class="line">	th32ModuleID        ulong</span><br><span class="line">	cntThreads          ulong</span><br><span class="line">	th32ParentProcessID ulong</span><br><span class="line">	pcPriClassBase      ulong</span><br><span class="line">	dwFlags             ulong</span><br><span class="line">	szExeFile           [260]byte</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">	kernel32 :&#x3D; syscall.NewLazyDLL(&quot;kernel32.dll&quot;)</span><br><span class="line">	CreateToolhelp32Snapshot :&#x3D; kernel32.NewProc(&quot;CreateToolhelp32Snapshot&quot;)</span><br><span class="line">	pHandle, _, _ :&#x3D; CreateToolhelp32Snapshot.Call(uintptr(0x2), uintptr(0x0))</span><br><span class="line">	if int(pHandle) &#x3D;&#x3D; -1 &#123;</span><br><span class="line">		return</span><br><span class="line">	&#125;</span><br><span class="line">	Process32Next :&#x3D; kernel32.NewProc(&quot;Process32Next&quot;)</span><br><span class="line">	num :&#x3D; 0</span><br><span class="line">	for &#123;</span><br><span class="line">		var proc PROCESSENTRY32</span><br><span class="line">		proc.dwSize &#x3D; ulong(unsafe.Sizeof(proc))</span><br><span class="line">		if rt, _, _ :&#x3D; Process32Next.Call(uintptr(pHandle), uintptr(unsafe.Pointer(&amp;proc))); int(rt) &#x3D;&#x3D; 1 &#123;</span><br><span class="line">			num++</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			break</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	CloseHandle :&#x3D; kernel32.NewProc(&quot;CloseHandle&quot;)</span><br><span class="line">	_, _, _ &#x3D; CloseHandle.Call(pHandle)</span><br><span class="line">	fmt.Println(num)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
       </div>
-    
-      <div class="post-item" title="DC-9">
-        <div class="time-m-d">2021-01-15</div>
-        <div class="title">
-          <a href="/2021/01/15/DC-9/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>DC-9</span>
-              
+              <a href="/2021/05/31/Golang%E5%85%8D%E6%9D%80Tips/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-06-03 20:56:25
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/06/03/Csharp%E8%BF%90%E8%A1%8Cpowershell/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="DC-8">
-        <div class="time-m-d">2021-01-13</div>
-        <div class="title">
-          <a href="/2021/01/13/DC-8/">
-            
-              
-                <span>DC-8</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-7">
-        <div class="time-m-d">2021-01-10</div>
-        <div class="title">
-          <a href="/2021/01/10/DC-7/">
-            
-              
-                <span>DC-7</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-6">
-        <div class="time-m-d">2021-01-08</div>
-        <div class="title">
-          <a href="/2021/01/08/DC-6/">
-            
-              
-                <span>DC-6</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-5">
-        <div class="time-m-d">2021-01-06</div>
-        <div class="title">
-          <a href="/2021/01/06/DC-5/">
-            
-              
-                <span>DC-5</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-4">
-        <div class="time-m-d">2021-01-03</div>
-        <div class="title">
-          <a href="/2021/01/03/DC-4/">
-            
-              
-                <span>DC-4</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-3">
-        <div class="time-m-d">2021-01-01</div>
-        <div class="title">
-          <a href="/2021/01/01/DC-3/">
-            
-              
-                <span>DC-3</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="DC-2">
-        <div class="time-m-d">2020-12-30</div>
-        <div class="title">
-          <a href="/2020/12/30/DC-2/">
-            
-              
-                <span>DC-2</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Tips"><span class="toc-text">Tips</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/2/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">3 / 5</span>
-    
-      <a href="/page/4/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">
