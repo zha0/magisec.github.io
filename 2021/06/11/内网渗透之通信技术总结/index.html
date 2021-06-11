@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="hacktrick,hacktrick,Dmagic" />
+  <meta name="author" content="hacktrick" />
+  <meta name="description" content="hacktrick" />
+  
+  
+  <title>
+    
+      内网渗透之通信技术总结 
+      
+      
+      |
+    
+     hacktrick
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/img.jpg">
+    <link rel="icon" href="/img.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/img.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Dmagic</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Posts</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">内网渗透之通信技术总结</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-06-11 15:44:30
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h1 id="内网渗透之通信技术总结"><a href="#内网渗透之通信技术总结" class="headerlink" title="内网渗透之通信技术总结"></a>内网渗透之通信技术总结</h1><h2 id="Metasploit"><a href="#Metasploit" class="headerlink" title="Metasploit"></a>Metasploit</h2><h3 id="端口转发"><a href="#端口转发" class="headerlink" title="端口转发"></a>端口转发</h3><p>将目标机器的8080端口转发到127.0.0.1的8081端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">portfwd add -l 8081 -p 8080 -r 127.0.0.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="Socks隧道"><a href="#Socks隧道" class="headerlink" title="Socks隧道"></a>Socks隧道</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">run post&#x2F;multi&#x2F;manage&#x2F;autoroute</span><br><span class="line">run auxiliary&#x2F;server&#x2F;socks_proxy</span><br></pre></td></tr></table></figure>
+
+<h2 id="SSH"><a href="#SSH" class="headerlink" title="SSH"></a>SSH</h2><p>参数说明</p>
+<ul>
+<li>-f 后台执行ssh指令</li>
+<li>-C 压缩数据</li>
+<li>-N 不执行远程指令</li>
+<li>-R 将远程主机的某个端口转发到本机端指定机器的指定端口</li>
+<li>-L 将本地机的某个端口转发到远程指定机器的指定端口</li>
+<li>-p 指定远程主机的端口</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -fCNR [B机器IP或省略]:[B机器端口]:[A机器的IP]:[A机器端口] [登陆B机器的用户名@服务器IP]</span><br><span class="line">ssh -fCNL [A机器IP或省略]:[A机器端口]:[B机器的IP]:[B机器端口] [登陆B机器的用户名@B机器的IP]</span><br></pre></td></tr></table></figure>
+
+<p>*为任何机子都能访问</p>
+<h3 id="远程端口转发"><a href="#远程端口转发" class="headerlink" title="远程端口转发"></a>远程端口转发</h3><p>将目标10521端口转发到目标的1521端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -R 0.0.0.0:10521:127.0.0.1:1521 -fN user@10.0.0.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="本地端口转发"><a href="#本地端口转发" class="headerlink" title="本地端口转发"></a>本地端口转发</h3><p>将目标8080端口转发到本地的8081端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 8081:localhost:8080 -fN user@10.0.0.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="Socks隧道-1"><a href="#Socks隧道-1" class="headerlink" title="Socks隧道"></a>Socks隧道</h3><p>在本地8888端口创建向10.0.0.1的socks5通道</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -qTfND 8888 user@10.0.0.1</span><br></pre></td></tr></table></figure>
+
+<p>暗月前辈关于SSH隧道技术的文章：<a target="_blank" rel="noopener" href="https://www.moonsec.com/archives/1274">https://www.moonsec.com/archives/1274</a></p>
+<p><img src="https://www.moonsec.com/wp-content/uploads/2020/05/ssh.png"></p>
+<h2 id="IOX"><a href="#IOX" class="headerlink" title="IOX"></a>IOX</h2><p>这款工具上手特别快，而且是GO开发的虽然体积稍微有点大，但是并不是问题。它的优势是简单易用，平台兼容好。</p>
+<p>IOX：<a target="_blank" rel="noopener" href="https://github.com/EddieIvan01/iox">https://github.com/EddieIvan01/iox</a></p>
+<ul>
+<li>-l 本地端口</li>
+<li>-r 连接远程的主机</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-l 127.0.0.1:9999      -l *127.0.0.1:9999      # 127.0.0.1:9999</span><br><span class="line">-l 9999                -l *9999                # 0.0.0.0:9999</span><br><span class="line"></span><br><span class="line">&#96;-l :9999&#96;也是可以的，但并不推荐。因为&#96;-l *:9999&#96;(监听0.0.0.0:9999，开启加密)会有歧义</span><br></pre></td></tr></table></figure>
+
+<h3 id="端口转发-1"><a href="#端口转发-1" class="headerlink" title="端口转发"></a>端口转发</h3><p>监听 0.0.0.0:8888 和0.0.0.0:9999，将两个连接间的流量转发</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iox fwd -l 8888 -l 9999</span><br></pre></td></tr></table></figure>
+
+<p>监听0.0.0.0:8888把流量转发到1.1.1.1:9999</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;iox fwd -l 8888 -r 1.1.1.1:9999</span><br></pre></td></tr></table></figure>
+
+<p>连接1.1.1.1:8888和1.1.1.1:9999, 在两个连接间转发</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;iox fwd -r 1.1.1.1:8888 -r 1.1.1.1:9999</span><br></pre></td></tr></table></figure>
+
+<h3 id="Socks代理"><a href="#Socks代理" class="headerlink" title="Socks代理"></a>Socks代理</h3><p>在本地 0.0.0.0:1080启动Socks5服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;iox proxy -l 1080</span><br></pre></td></tr></table></figure>
+
+<p>在被控机开启Socks5服务，将服务转发到公网VPS。在VPS上转发0.0.0.0:9999到0.0.0.0:1080。你必须将两条命令成对使用，因为它内部包含了一个简单的协议来控制回连。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;iox proxy -r 1.1.1.1:9999 &#x2F;&#x2F;被控机</span><br><span class="line">.&#x2F;iox proxy -l 9999 -l 1080 &#x2F;&#x2F;vps</span><br></pre></td></tr></table></figure>
+
+<h3 id="启用加密"><a href="#启用加密" class="headerlink" title="启用加密"></a>启用加密</h3><p>注意：key必须是数字</p>
+<p>被控机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;iox fwd -r 192.168.0.100:3389 -r *1.1.1.1:8888 -k 656565</span><br></pre></td></tr></table></figure>
+
+<p>VPS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;iox fwd -l *8888 -l 33890 -k 656565</span><br></pre></td></tr></table></figure>
+
+<h2 id="FRP"><a href="#FRP" class="headerlink" title="FRP"></a>FRP</h2><h3 id="实战环境"><a href="#实战环境" class="headerlink" title="实战环境"></a>实战环境</h3><p>网络环境：</p>
+<ul>
+<li>Kali 192.168.20.131</li>
+<li>Win10 192.168.20.134 192.168.58.128</li>
+<li>Win7 192.168.58.129 192.168.18.128</li>
+<li>Ser2008 192.168.18.129</li>
+</ul>
+<p>通信情况：</p>
+<ol>
+<li>kali通Win10</li>
+<li>Win10通Win7和Kali</li>
+<li>Win7通Win10和Ser2008</li>
+<li>Ser2008通Win7</li>
+</ol>
+<h4 id="二层网络应用"><a href="#二层网络应用" class="headerlink" title="二层网络应用"></a>二层网络应用</h4><h5 id="端口转发-2"><a href="#端口转发-2" class="headerlink" title="端口转发"></a>端口转发</h5><p>frpc.ini</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr &#x3D; 192.168.20.131</span><br><span class="line">server_port &#x3D; 7000</span><br><span class="line">tls_enable &#x3D; true</span><br><span class="line"></span><br><span class="line">[rdp]</span><br><span class="line">type &#x3D; tcp</span><br><span class="line">local_ip &#x3D; 192.168.58.129       </span><br><span class="line">local_port &#x3D; 3389</span><br><span class="line">remote_port &#x3D; 7001</span><br><span class="line">use_encryption &#x3D; true</span><br><span class="line">use_compression &#x3D; true</span><br></pre></td></tr></table></figure>
+
+
+
+<p>转发192.168.58.129的3389端口到7001</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611135026482.png" alt="image-20210611135026482"></p>
+<p>使用rdesktop连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdesktop 127.0.0.1:7001</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611135627893.png" alt="image-20210611135627893"></p>
+<h5 id="Socks5隧道"><a href="#Socks5隧道" class="headerlink" title="Socks5隧道"></a>Socks5隧道</h5><p>frpc.ini</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr &#x3D; 192.168.20.131</span><br><span class="line">server_port &#x3D; 7000</span><br><span class="line">tls_enable &#x3D; true</span><br><span class="line"></span><br><span class="line">[socks5_proxy]</span><br><span class="line">type &#x3D; tcp</span><br><span class="line">remote_port &#x3D; 7002</span><br><span class="line">plugin &#x3D; socks5</span><br><span class="line">use_encryption &#x3D; true</span><br><span class="line">use_compression &#x3D; true</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611135824324.png" alt="image-20210611135824324"></p>
+<p>Kali配置Socks5代理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim &#x2F;etc&#x2F;proxychains4.conf</span><br></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210611135906354.png" alt="image-20210611135906354"></p>
+<p>使用proxychains代理rdesktop进行连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains rdesktop 192.168.58.129</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611140000353.png" alt="image-20210611140000353"></p>
+<h4 id="三层网络应用"><a href="#三层网络应用" class="headerlink" title="三层网络应用"></a>三层网络应用</h4><h5 id="端口转发-3"><a href="#端口转发-3" class="headerlink" title="端口转发"></a>端口转发</h5><p>Win10启动frps</p>
+<p>frps.ini</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port &#x3D; 7000</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611143445928.png" alt="image-20210611143445928"></p>
+<p>Win7使用frpc连接Win10，转发192.168.18.129的3389端口到192.168.58.128的7001端口</p>
+<p>frpc.ini</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr &#x3D; 192.168.58.128</span><br><span class="line">server_port &#x3D; 7000</span><br><span class="line">tls_enable &#x3D; true</span><br><span class="line"></span><br><span class="line">[rdp]</span><br><span class="line">type &#x3D; tcp</span><br><span class="line">local_ip &#x3D; 192.168.18.129       </span><br><span class="line">local_port &#x3D; 3389</span><br><span class="line">remote_port &#x3D; 7001</span><br><span class="line">use_encryption &#x3D; true</span><br><span class="line">use_compression &#x3D; true</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611143711033.png" alt="image-20210611143711033"></p>
+<p>Win10使用frpc连接Kali，将127.0.0.1的7001端口（192.168.18.129的3389端口）转发到Kali的7001端口</p>
+<p>frpc.ini</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr &#x3D; 192.168.20.131</span><br><span class="line">server_port &#x3D; 7000</span><br><span class="line">tls_enable &#x3D; true</span><br><span class="line"></span><br><span class="line">[rdp]</span><br><span class="line">type &#x3D; tcp</span><br><span class="line">local_ip &#x3D; 127.0.0.1      </span><br><span class="line">local_port &#x3D; 7001</span><br><span class="line">remote_port &#x3D; 7001</span><br><span class="line">use_encryption &#x3D; true</span><br><span class="line">use_compression &#x3D; true</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611143801027.png" alt="image-20210611143801027"></p>
+<p>使用rdesktop进行连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdesktop 127.0.0.1:7001</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611143832903.png" alt="image-20210611143832903"></p>
+<h5 id="Socks5隧道-1"><a href="#Socks5隧道-1" class="headerlink" title="Socks5隧道"></a>Socks5隧道</h5><p>Win10启动frps</p>
+<p>frps.ini</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port &#x3D; 7000</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611145723699.png" alt="image-20210611145723699"></p>
+<p>Win7连接Win10的frps，创建socks5代理转发至Win10的7002端口</p>
+<p>frpc.ini</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr &#x3D; 192.168.58.128</span><br><span class="line">server_port &#x3D; 7000</span><br><span class="line">tls_enable &#x3D; true</span><br><span class="line"></span><br><span class="line">[socks5_proxy]</span><br><span class="line">type &#x3D; tcp</span><br><span class="line">remote_port &#x3D; 7002</span><br><span class="line">plugin &#x3D; socks5</span><br><span class="line">use_encryption &#x3D; true</span><br><span class="line">use_compression &#x3D; true</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611145850477.png" alt="image-20210611145850477"></p>
+<p>Win10连接Kali的frps，将127.0.0.1的7002端口转发至Kali的7001端口去</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr &#x3D; 192.168.20.131</span><br><span class="line">server_port &#x3D; 7000</span><br><span class="line">tls_enable &#x3D; true</span><br><span class="line"></span><br><span class="line">[rdp]</span><br><span class="line">type &#x3D; tcp</span><br><span class="line">local_ip &#x3D; 127.0.0.1      </span><br><span class="line">local_port &#x3D; 7002</span><br><span class="line">remote_port &#x3D; 7001</span><br><span class="line">use_encryption &#x3D; true</span><br><span class="line">use_compression &#x3D; true</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611150015162.png" alt="image-20210611150015162"></p>
+<p>Kali配置Socks5代理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim &#x2F;etc&#x2F;proxychains4.conf</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611150159097.png" alt="image-20210611150159097"></p>
+<p>使用proxychains代理rdesktop进行连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains rdesktop 192.168.18.129</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210611150103726.png" alt="image-20210611150103726"></p>
+<h2 id="其他工具"><a href="#其他工具" class="headerlink" title="其他工具"></a>其他工具</h2><ul>
+<li>iodine：<a target="_blank" rel="noopener" href="https://code.kryo.se/iodine/">https://code.kryo.se/iodine/</a> DNS隧道</li>
+<li>pingtunnel：<a target="_blank" rel="noopener" href="https://github.com/esrrhs/pingtunnel">https://github.com/esrrhs/pingtunnel</a> ICMP隧道</li>
+<li>hanstunnel：<a target="_blank" rel="noopener" href="https://github.com/albertzak/hanstunnel">https://github.com/albertzak/hanstunnel</a> ICMP隧道</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>主要总结FRP的使用，提了一下IOX。先说说iox，当时学内网渗透的时候有很多工具，使用参数难记。但是iox的这款工具特别适合新手，且教程相当详细，参数够简洁，我很喜欢使用这一款工具。FRP确实很不错，但是体积真的有点大。而且流量特征相当明显，后期我会进行对其进行改造。主要改造从 流量特征 体积 配置文件这三个方面入手。关于文章为什么不写其他的工具呢？招式太多，不如精通一两招就可以了。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2021/06/03/Golang%E8%8E%B7%E5%8F%96%E8%BF%9B%E7%A8%8B%E6%95%B0/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-06-11 15:44:30
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%B9%8B%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93"><span class="toc-text">内网渗透之通信技术总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Metasploit"><span class="toc-text">Metasploit</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-text">端口转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Socks%E9%9A%A7%E9%81%93"><span class="toc-text">Socks隧道</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSH"><span class="toc-text">SSH</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-text">远程端口转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-text">本地端口转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Socks%E9%9A%A7%E9%81%93-1"><span class="toc-text">Socks隧道</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IOX"><span class="toc-text">IOX</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91-1"><span class="toc-text">端口转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Socks%E4%BB%A3%E7%90%86"><span class="toc-text">Socks代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E7%94%A8%E5%8A%A0%E5%AF%86"><span class="toc-text">启用加密</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FRP"><span class="toc-text">FRP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E7%8E%AF%E5%A2%83"><span class="toc-text">实战环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E5%B1%82%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8"><span class="toc-text">二层网络应用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91-2"><span class="toc-text">端口转发</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Socks5%E9%9A%A7%E9%81%93"><span class="toc-text">Socks5隧道</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E5%B1%82%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8"><span class="toc-text">三层网络应用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91-3"><span class="toc-text">端口转发</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Socks5%E9%9A%A7%E9%81%93-1"><span class="toc-text">Socks5隧道</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%B7%A5%E5%85%B7"><span class="toc-text">其他工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/magisec/">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/magisec/magisec.github.io">Theme by Hacktrick</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>
